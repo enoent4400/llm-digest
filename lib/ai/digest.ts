@@ -64,6 +64,29 @@ export async function createDigest(conversation: UniversalConversation): Promise
     throw new Error('Failed to get response from OpenRouter API after retries');
   }
 
+  // Log the full response structure for debugging
+  console.log('OpenRouter API response structure:', {
+    hasChoices: !!response.choices,
+    choicesLength: response.choices?.length,
+    responseKeys: Object.keys(response),
+    firstChoice: response.choices?.[0] ? Object.keys(response.choices[0]) : 'no choices'
+  });
+
+  // Validate response structure
+  if (!response.choices || !Array.isArray(response.choices) || response.choices.length === 0) {
+    console.error('Invalid OpenRouter response structure:', response);
+    
+    // If response has an error field, show that specifically
+    if ('error' in response) {
+      const errorMsg = typeof response.error === 'string' ? response.error : 
+                      typeof response.error === 'object' && response.error && 'message' in response.error ? 
+                      String(response.error.message) : JSON.stringify(response.error);
+      throw new Error(`OpenRouter API error: ${errorMsg}`);
+    }
+    
+    throw new Error(`Invalid OpenRouter API response: missing or empty choices array. Response keys: ${Object.keys(response).join(', ')}`);
+  }
+
   const digest = response.choices[0]?.message?.content || '{}';
   const usage = response.usage;
   const tokenUsage = usage?.total_tokens || 0;

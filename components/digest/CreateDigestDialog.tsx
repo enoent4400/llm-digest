@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -25,8 +25,10 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Progress } from "@/components/ui/progress"
+
 import { Icon } from "@/components/ui/icon"
-import { RotateCcw, PartyPopper, Rocket, } from "lucide-react"
+import { PartyPopper, Rocket, } from "lucide-react"
 
 const formSchema = z.object({
   claudeUrl: z.string()
@@ -43,7 +45,34 @@ interface CreateDigestDialogProps {
 export function CreateDigestDialog({ children }: CreateDigestDialogProps) {
   const [open, setOpen] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [progress, setProgress] = useState(0)
+  const [progressMessage, setProgressMessage] = useState("")
   const router = useRouter()
+  const progressTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const currentProgressRef = useRef(0)
+  const messageIndexRef = useRef(0)
+
+  const progressMessages = [
+    "Analyzing conversation structure...",
+    "Extracting key insights...",
+    "Processing AI responses...",
+    "Identifying important topics...",
+    "Organizing conversation flow...",
+    "Generating summary points...",
+    "Creating digest structure...",
+    "Applying final touches...",
+    "Almost ready...",
+  ]
+
+  // Cleanup progress timer on unmount
+  useEffect(() => {
+    return () => {
+      if (progressTimerRef.current) {
+        clearInterval(progressTimerRef.current)
+        progressTimerRef.current = null
+      }
+    }
+  }, [])
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -55,11 +84,25 @@ export function CreateDigestDialog({ children }: CreateDigestDialogProps) {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true)
 
-    // Show loading toast
-    const loadingToastId = toast.loading("Creating digest...", {
-      description: "This will take a few seconds...",
-      icon: <Icon icon={RotateCcw} size={16} strokeWidth={2.5} className="animate-spin text-black dark:text-white" />,
-    })
+    // Start progress indicator
+    setProgress(0)
+    setProgressMessage(progressMessages[0])
+    currentProgressRef.current = 0
+    messageIndexRef.current = 0
+
+    // Simulate progress with random messages using refs
+    progressTimerRef.current = setInterval(() => {
+      currentProgressRef.current += Math.random() * 15 + 5 // Progress by 5-20% each time
+      if (currentProgressRef.current >= 95) currentProgressRef.current = 95 // Cap at 95% until completion
+
+      // Update message every 20-30% progress or if we've moved to next message
+      if (currentProgressRef.current > (messageIndexRef.current + 1) * 10 && messageIndexRef.current < progressMessages.length - 1) {
+        messageIndexRef.current++
+        setProgressMessage(progressMessages[messageIndexRef.current])
+      }
+
+      setProgress(currentProgressRef.current)
+    }, 800 + Math.random() * 400) // Random interval between 800-1200ms
 
     try {
       // Create digest directly from URL using the unified API
@@ -76,8 +119,15 @@ export function CreateDigestDialog({ children }: CreateDigestDialogProps) {
 
       const digestData = await digestResponse.json()
 
+      // Clear progress timer and complete progress
+      if (progressTimerRef.current) {
+        clearInterval(progressTimerRef.current)
+        progressTimerRef.current = null
+      }
+      currentProgressRef.current = 100
+      setProgress(100)
+
       // Dismiss loading toast and show success
-      toast.dismiss(loadingToastId)
       toast.success("Digest created successfully!", {
         description: "Redirecting to your digest...",
         duration: 3000,
@@ -85,22 +135,29 @@ export function CreateDigestDialog({ children }: CreateDigestDialogProps) {
       })
 
       // Navigate to the digest page after a short delay
-      setTimeout(() => {
-        router.push(`/digest/${digestData.digestId}`)
-      }, 1000)
+      router.push(`/digest/${digestData.digestId}`)
 
       // Close dialog and reset form
       setOpen(false)
       form.reset()
 
     } catch (error) {
+      // Clear progress timer
+      if (progressTimerRef.current) {
+        clearInterval(progressTimerRef.current)
+        progressTimerRef.current = null
+      }
+
       // Dismiss loading toast and show error
-      toast.dismiss(loadingToastId)
       toast.error("Failed to create digest", {
         description: error instanceof Error ? error.message : "Please try again or contact support.",
       })
     } finally {
       setIsSubmitting(false)
+      setProgress(0)
+      currentProgressRef.current = 0
+      messageIndexRef.current = 0
+      setProgressMessage("")
     }
   }
 
@@ -131,6 +188,7 @@ export function CreateDigestDialog({ children }: CreateDigestDialogProps) {
                     <Input
                       placeholder="https://claude.ai/share/... or chatgpt.com/share/..."
                       {...field}
+                      disabled={isSubmitting}
                     />
                   </FormControl>
                   <FormDescription className="text-xs text-gray-500">
@@ -140,6 +198,19 @@ export function CreateDigestDialog({ children }: CreateDigestDialogProps) {
                 </FormItem>
               )}
             />
+
+            {isSubmitting && (
+              <div className="space-y-3">
+                <div className="flex justify-between items-center text-xs text-gray-500">
+                  <span>Progress</span>
+                  <span>{Math.round(progress)}%</span>
+                </div>
+                <Progress value={progress} className="w-full" />
+                <p className="text-sm text-gray-400 text-center animate-pulse">
+                  {progressMessage}
+                </p>
+              </div>
+            )}
 
             <DialogFooter className="flex gap-3">
               <Button
