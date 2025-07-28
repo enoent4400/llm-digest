@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+/.pnp
+.pnp.js
+
+# Testing
+/coverage
+
+# Next.js
+/.next/
+/out/
+
+# Production
+/build
+
+# Misc
+.DS_Store
+*.pem
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# All env files
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# PocketBase
+/pocketbase/pocketbase
+/pocketbase/pb_data/
+/pocketbase/pb_migrations/
+/pocketbase/*.zip
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
