@@ -130,11 +130,16 @@ describe('Mock Database Operations', () => {
 
 describe('Data Validation', () => {
   it('should handle all required digest format types', async () => {
-    const formats: Array<'executive-summary' | 'action-plan' | 'faq' | 'mind-map'> = [
+    const formats: Array<'executive-summary' | 'action-plan' | 'faq' | 'mind-map' | 'knowledge-graph' | 'code-organization' | 'gantt-chart' | 'decision-tree' | 'blog-post'> = [
       'executive-summary',
       'action-plan', 
       'faq',
-      'mind-map'
+      'mind-map',
+      'knowledge-graph',
+      'code-organization',
+      'gantt-chart',
+      'decision-tree',
+      'blog-post'
     ];
     
     for (const format of formats) {

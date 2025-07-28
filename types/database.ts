@@ -4,7 +4,7 @@ import { DigestContent } from "./digest";
 
 // Base platform types
 export type SourcePlatform = 'claude' | 'chatgpt' | 'gemini' | 'perplexity' | 'copilot' | 'grok';
-export type DigestFormat = 'executive-summary' | 'action-plan' | 'faq' | 'mind-map';
+export type DigestFormat = 'executive-summary' | 'action-plan' | 'faq' | 'mind-map' | 'knowledge-graph' | 'code-organization' | 'gantt-chart' | 'decision-tree' | 'blog-post';
 
 // Core digest database entity
 export interface DigestData {

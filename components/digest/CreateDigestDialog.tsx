@@ -127,7 +127,7 @@ export function CreateDigestDialog({ children }: CreateDigestDialogProps) {
       currentProgressRef.current = 100
       setProgress(100)
 
-      // Dismiss loading toast and show success
+      // Show success
       toast.success("Digest created successfully!", {
         description: "Redirecting to your digest...",
         duration: 3000,
@@ -148,7 +148,7 @@ export function CreateDigestDialog({ children }: CreateDigestDialogProps) {
         progressTimerRef.current = null
       }
 
-      // Dismiss loading toast and show error
+      // Show error
       toast.error("Failed to create digest", {
         description: error instanceof Error ? error.message : "Please try again or contact support.",
       })

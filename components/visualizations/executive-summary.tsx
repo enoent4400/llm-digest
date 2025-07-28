@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
 import { BookOpen, Target, Wrench, Lightbulb, AlertTriangle, MessageCircle, ClipboardList, Copy, Check, HelpCircle } from 'lucide-react';
+import { toast } from 'sonner';
 import type {
   ExecutiveSummaryContent,
 } from '@/types/digest';
@@ -130,9 +131,21 @@ export function ExecutiveSummary({ digest, databaseDigest, showMetadata = false 
         }
       };
 
-  const handleCopy = () => {
-    const copyableText = generateCopyableText(content);
-    navigator.clipboard.writeText(copyableText);
+  const handleCopy = async () => {
+    try {
+      const copyableText = generateCopyableText(content);
+      await navigator.clipboard.writeText(copyableText);
+      toast.success("Copied to clipboard!", {
+        description: "Digest content has been copied as formatted text.",
+        duration: 2000,
+        icon: <Icon icon={Check} size={16} className="text-white" />,
+      });
+    } catch (error) {
+      toast.error("Failed to copy", {
+        description: "Please try again or check your browser permissions.",
+        duration: 3000,
+      });
+    }
   };
 
   // Check for error state
