@@ -1,10 +1,10 @@
 // Database entity types and related interfaces
-// Centralized definitions for all database models
+
+import { DigestContent } from "./digest";
 
 // Base platform types
-export type SourcePlatform = 'claude' | 'chatgpt' | 'gemini' | 'perplexity';
+export type SourcePlatform = 'claude' | 'chatgpt' | 'gemini' | 'perplexity' | 'copilot' | 'grok';
 export type DigestFormat = 'executive-summary' | 'action-plan' | 'faq' | 'mind-map';
-export type DigestStatus = 'pending' | 'processing' | 'completed' | 'failed';
 
 // Core digest database entity
 export interface DigestData {
@@ -15,9 +15,8 @@ export interface DigestData {
   conversation_fingerprint: string;
   title: string;
   format: DigestFormat;
-  status: DigestStatus;
-  raw_content?: any; // Original conversation data
-  processed_content: any; // Processed digest content (should be DigestContent)
+  raw_content?: any;
+  processed_content: any;
   input_tokens: number;
   output_tokens: number;
   estimated_cost: number;
@@ -28,12 +27,10 @@ export interface DigestData {
 // Full digest record with database-generated fields
 export interface DigestRecord extends DigestData {
   id: string;
-  created_at: string;
-  updated_at?: string;
+  created: string;
+  updated: string;
+  status?: 'pending' | 'processing' | 'completed';
 }
-
-// Alias for backward compatibility with existing code
-export interface DigestWithStatus extends DigestRecord {}
 
 // User profile related types
 export interface UserProfile {
@@ -61,7 +58,6 @@ export interface UsageRecord {
 // Database query filter types
 export interface DigestFilters {
   userId: string;
-  status?: DigestStatus | 'all';
   platform?: SourcePlatform;
   format?: DigestFormat;
   startDate?: string;
@@ -93,14 +89,12 @@ export interface SaveDigestParams extends DigestData {}
 
 export interface UpdateDigestParams {
   title?: string;
-  status?: DigestStatus;
   processed_content?: any;
   input_tokens?: number;
   output_tokens?: number;
   estimated_cost?: number;
   model_used?: string;
   metadata?: Record<string, any>;
-  updated_at?: string;
 }
 
 // Cache-related types

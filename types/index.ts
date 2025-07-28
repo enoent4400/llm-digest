@@ -9,7 +9,6 @@ export * from './utils';
 
 // Re-export only specific non-conflicting types from components and forms
 export type {
-  CreateDigestModalProps,
   ExecutiveSummaryProps,
   DashboardClientProps,
   DigestCardProps

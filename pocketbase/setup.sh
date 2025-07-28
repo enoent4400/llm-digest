@@ -45,17 +45,18 @@ if [ ! -f "pocketbase" ]; then
   chmod +x pocketbase
 fi
 
-# Create initial migration file
-cat > pb_migrations/001_create_digests.js << 'EOF'
+# Create single migration file
+cat > pb_migrations/001_init.js << 'EOF'
 migrate((app) => {
+  // Create digests collection
   const collection = new Collection({
     name: "digests",
     type: "base",
-    listRule: null,
-    viewRule: null,
-    createRule: null,
-    updateRule: null,
-    deleteRule: null,
+    listRule: "",
+    viewRule: "",
+    createRule: "",
+    updateRule: "",
+    deleteRule: "",
     fields: [
       {
         name: "user_id",
@@ -72,7 +73,7 @@ migrate((app) => {
         name: "source_platform",
         type: "select",
         required: true,
-        values: ["claude", "chatgpt", "gemini", "perplexity"]
+        values: ["claude", "chatgpt", "gemini", "perplexity", "copilot", "grok"]
       },
       {
         name: "conversation_title",
@@ -134,6 +135,16 @@ migrate((app) => {
         name: "metadata",
         type: "json",
         required: false,
+      },
+      {
+        name: "created",
+        type: "date",
+        required: false,
+      },
+      {
+        name: "updated",
+        type: "date",
+        required: false,
       }
     ],
     indexes: [
@@ -144,69 +155,45 @@ migrate((app) => {
   })
 
   app.save(collection)
-}, (app) => {
-  const collection = app.findCollectionByNameOrId("digests")
-  app.delete(collection)
-})
-EOF
-
-# Create superadmin migration file
-cat > pb_migrations/002_create_superadmin.js << 'EOF'
-migrate((app) => {
+  
+  // Create superadmin
   const email = $os.getenv("SUPERADMIN_EMAIL")
   const password = $os.getenv("SUPERADMIN_PASS")
   
-  // Skip if environment variables are not set
-  if (!email || !password) {
-    console.log("⚠️  SUPERADMIN_EMAIL or SUPERADMIN_PASS not set, skipping superadmin creation")
-    return
-  }
-  
-  // Validate email format
-  if (!email.includes("@")) {
-    console.log("⚠️  Invalid SUPERADMIN_EMAIL format, skipping superadmin creation")
-    return
-  }
-  
-  // Validate password length
-  if (password.length < 8) {
-    console.log("⚠️  SUPERADMIN_PASS must be at least 8 characters, skipping superadmin creation")
-    return
-  }
-  
-  const superusers = app.findCollectionByNameOrId("_superusers")
-  
-  // Check if superadmin already exists
-  try {
-    const existingAdmin = app.findAuthRecordByEmail("_superusers", email)
-    if (existingAdmin) {
-      console.log("ℹ️  Superadmin with email " + email + " already exists, skipping creation")
-      return
+  if (email && password && email.includes("@") && password.length >= 8) {
+    const superusers = app.findCollectionByNameOrId("_superusers")
+    
+    try {
+      const existingAdmin = app.findAuthRecordByEmail("_superusers", email)
+      if (!existingAdmin) {
+        const record = new Record(superusers)
+        record.set("email", email)
+        record.set("password", password)
+        app.save(record)
+        console.log("✅ Superadmin created with email: " + email)
+      }
+    } catch {
+      const record = new Record(superusers)
+      record.set("email", email)
+      record.set("password", password)
+      app.save(record)
+      console.log("✅ Superadmin created with email: " + email)
     }
-  } catch {
-    // Admin doesn't exist, continue with creation
   }
-  
-  const record = new Record(superusers)
-  record.set("email", email)
-  record.set("password", password)
-  
-  app.save(record)
-  console.log("✅ Superadmin created with email: " + email)
 }, (app) => {
-  const email = $os.getenv("SUPERADMIN_EMAIL")
-  
-  if (!email) {
-    return
+  const collection = app.findCollectionByNameOrId("digests")
+  if (collection) {
+    app.delete(collection)
   }
   
-  try {
-    const record = app.findAuthRecordByEmail("_superusers", email)
-    app.delete(record)
-    console.log("🗑️  Superadmin with email " + email + " removed")
-  } catch {
-    // Admin doesn't exist or already deleted
-    console.log("ℹ️  Superadmin with email " + email + " not found or already removed")
+  const email = $os.getenv("SUPERADMIN_EMAIL")
+  if (email) {
+    try {
+      const record = app.findAuthRecordByEmail("_superusers", email)
+      if (record) {
+        app.delete(record)
+      }
+    } catch {}
   }
 })
 EOF

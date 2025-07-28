@@ -3,7 +3,7 @@
 
 import type { ClaudeConversation } from '@/lib/claude';
 import type { DigestResult } from '@/lib/ai';
-import { DigestWithStatus } from './database';
+import { DigestRecord } from './database';
 // Removed Supabase session import
 
 // Base API response structure
@@ -103,7 +103,7 @@ export interface GetDigestRequest {
 
 export interface GetDigestResponse {
   success: boolean;
-  digest?: DigestWithStatus // Should be DigestWithStatus from database.ts
+  digest?: DigestRecord // Should be DigestRecord from database.ts
   error?: string;
 }
 
@@ -119,7 +119,7 @@ export interface DigestListRequest {
 
 export interface DigestListResponse {
   success: boolean;
-  digests: []; // Should be DigestWithStatus[]
+  digests: []; // Should be DigestRecord[]
   total: number;
   hasMore: boolean;
   pagination: {

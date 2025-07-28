@@ -1,30 +1,6 @@
 // PocketBase database implementation for digests
-// PocketBase database implementation maintaining same API interface
 
-import { Platform } from '@/lib/platform/types';
-
-export interface DigestData {
-  user_id: string;
-  source_url: string;
-  source_platform: Platform;
-  conversation_title: string;
-  conversation_fingerprint: string;
-  title: string;
-  format: 'executive-summary' | 'action-plan' | 'faq' | 'mind-map';
-  processed_content: Record<string, unknown>;
-  input_tokens: number;
-  output_tokens: number;
-  estimated_cost: number;
-  model_used: string;
-  raw_content?: Record<string, unknown>;
-  metadata?: Record<string, unknown>;
-}
-
-export interface DigestRecord extends DigestData {
-  id: string;
-  created: string;
-  updated: string;
-}
+import { DigestData, DigestRecord } from '@/types/database';
 
 // PocketBase configuration
 const POCKETBASE_URL = process.env.POCKETBASE_URL || 'http://localhost:8090';
@@ -52,7 +28,31 @@ class PocketBaseClient {
       throw new Error(`PocketBase request failed: ${response.status} ${error}`);
     }
 
-    return response.json();
+    // Handle empty responses (common for DELETE operations)
+    const contentLength = response.headers.get('content-length');
+    const contentType = response.headers.get('content-type');
+    
+    // If no content or not JSON, return empty object
+    if (
+      response.status === 204 || 
+      contentLength === '0' || 
+      !contentType?.includes('application/json')
+    ) {
+      return {};
+    }
+
+    // Check if response has actual content before parsing JSON
+    const text = await response.text();
+    if (!text.trim()) {
+      return {};
+    }
+
+    try {
+      return JSON.parse(text);
+    } catch (error) {
+      console.error('Failed to parse JSON response:', text);
+      throw new Error('Invalid JSON response from PocketBase');
+    }
   }
 
   async create(collection: string, data: any) {
@@ -70,7 +70,7 @@ class PocketBaseClient {
     const params = new URLSearchParams();
     if (filter) params.append('filter', filter);
     if (limit) params.append('perPage', limit.toString());
-    
+
     return this.request(`collections/${collection}/records?${params.toString()}`);
   }
 
@@ -92,6 +92,14 @@ const pb = new PocketBaseClient(POCKETBASE_URL);
 
 // Transform PocketBase record to our format
 function transformRecord(record: any): DigestRecord {
+  // Compute status based on processed_content
+  let status: 'pending' | 'processing' | 'completed' = 'pending';
+  if (record.processed_content && Object.keys(record.processed_content).length > 0) {
+    status = 'completed';
+  } else if (record.raw_content && Object.keys(record.raw_content).length > 0) {
+    status = 'processing';
+  }
+
   return {
     id: record.id,
     user_id: record.user_id,
@@ -108,8 +116,9 @@ function transformRecord(record: any): DigestRecord {
     model_used: record.model_used || '',
     raw_content: record.raw_content,
     metadata: record.metadata,
-    created: record.created,
-    updated: record.updated,
+    created: record.created || new Date().toISOString(),
+    updated: record.updated || record.created || new Date().toISOString(),
+    status,
   };
 }
 
@@ -125,6 +134,7 @@ export async function saveDigest(data: DigestData) {
 export async function getDigestById(id: string) {
   try {
     const record = await pb.getById(COLLECTION_NAME, id);
+    console.log('Fetched digest record:', record);
     return { data: transformRecord(record), error: null };
   } catch (error) {
     return { data: null, error: { message: error instanceof Error ? error.message : 'Unknown error' } };
@@ -156,11 +166,11 @@ export async function getDigestByFingerprint(fingerprint: string, userId: string
     const filter = `conversation_fingerprint='${fingerprint}' && user_id='${userId}'`;
     const response = await pb.list(COLLECTION_NAME, filter, 1);
     const record = response.items?.[0];
-    
+
     if (!record) {
       return { data: null, error: { message: 'Digest not found' } };
     }
-    
+
     return { data: transformRecord(record), error: null };
   } catch (error) {
     return { data: null, error: { message: error instanceof Error ? error.message : 'Unknown error' } };
@@ -171,15 +181,15 @@ export async function deleteDigest(id: string, userId: string) {
   try {
     // First verify ownership
     const { data: existing, error: fetchError } = await getDigestById(id);
-    
+
     if (fetchError || !existing) {
       return { data: null, error: { message: 'Digest not found' } };
     }
-    
+
     if (existing.user_id !== userId) {
       return { data: null, error: { message: 'Unauthorized' } };
     }
-    
+
     await pb.delete(COLLECTION_NAME, id);
     return { data: { id }, error: null };
   } catch (error) {

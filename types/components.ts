@@ -2,17 +2,11 @@
 // Centralized definitions for all component props and UI states
 
 import type { ReactNode } from 'react';
-import type { DigestWithStatus } from './database';
+import type { DigestRecord } from './database';
 import type { ExecutiveSummaryContent } from './digest';
 import type { DigestResult } from '@/lib/ai';
 
 // === Modal and Dialog Component Types ===
-
-export interface CreateDigestModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  isLoading?: boolean;
-}
 
 export interface CreateDigestDialogProps {
   children: ReactNode;
@@ -21,7 +15,7 @@ export interface CreateDigestDialogProps {
 export interface DeleteDigestModalProps {
   isOpen: boolean;
   onClose: () => void;
-  digest: DigestWithStatus | null;
+  digest: DigestRecord | null;
   onConfirm: (digestId: string) => void;
   isDeleting?: boolean;
 }
@@ -29,7 +23,7 @@ export interface DeleteDigestModalProps {
 export interface RegenerateDigestModalProps {
   isOpen: boolean;
   onClose: () => void;
-  digest: DigestWithStatus | null;
+  digest: DigestRecord | null;
   onConfirm: (digestId: string) => void;
   isRegenerating?: boolean;
 }
@@ -39,7 +33,7 @@ export interface RegenerateDigestModalProps {
 export interface ExecutiveSummaryProps {
   digest: ExecutiveSummaryContent;
   apiResponse?: DigestResult;
-  databaseDigest?: DigestWithStatus;
+  databaseDigest?: DigestRecord;
   showMetadata?: boolean;
   className?: string;
 }
@@ -70,21 +64,21 @@ export interface DashboardClientProps {
     email?: string;
     created_at?: string;
   };
-  digests: DigestWithStatus[];
+  digests: DigestRecord[];
 }
 
 export interface DigestCardProps {
-  digest: DigestWithStatus;
+  digest: DigestRecord;
   onView: (digestId: string) => void;
-  onDelete: (digest: DigestWithStatus) => void;
-  onRegenerate: (digest: DigestWithStatus) => void;
-  onShare?: (digest: DigestWithStatus) => void;
+  onDelete: (digest: DigestRecord) => void;
+  onRegenerate: (digest: DigestRecord) => void;
+  onShare?: (digest: DigestRecord) => void;
 }
 
 export interface DigestGridProps {
-  digests: DigestWithStatus[];
+  digests: DigestRecord[];
   isLoading?: boolean;
-  onDigestAction: (action: 'view' | 'delete' | 'regenerate' | 'share', digest: DigestWithStatus) => void;
+  onDigestAction: (action: 'view' | 'delete' | 'regenerate' | 'share', digest: DigestRecord) => void;
 }
 
 // === Form Component Types ===
@@ -217,8 +211,8 @@ export interface InputProps {
 // === State Management Types ===
 
 export interface DigestState {
-  digests: DigestWithStatus[];
-  currentDigest: DigestWithStatus | null;
+  digests: DigestRecord[];
+  currentDigest: DigestRecord | null;
   isLoading: boolean;
   error: string | null;
   filters: DigestFiltersState;
@@ -238,6 +232,6 @@ export interface UIState {
 
 // === Event Handler Types ===
 
-export type DigestActionHandler = (action: 'view' | 'delete' | 'regenerate' | 'share', digest: DigestWithStatus) => void;
+export type DigestActionHandler = (action: 'view' | 'delete' | 'regenerate' | 'share', digest: DigestRecord) => void;
 export type ModalHandler = (isOpen: boolean) => void;
 export type FilterChangeHandler = (filters: Partial<DigestFiltersState>) => void;

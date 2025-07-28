@@ -8,18 +8,18 @@ import type {
   ExecutiveSummaryContent,
 } from '@/types/digest';
 import type { DigestResult } from '@/types/external';
-import type { DigestWithStatus } from '@/types/database';
+import type { DigestRecord } from '@/types/database';
 import type { ComplexityLevel } from '@/types/digest';
 
 interface ExecutiveSummaryProps {
   digest?: ExecutiveSummaryContent;
   apiResponse?: DigestResult;
-  databaseDigest?: DigestWithStatus;
+  databaseDigest?: DigestRecord;
   showMetadata?: boolean;
 }
 
 // Helper function to parse database digest content
-function parseDatabaseDigest(dbDigest: DigestWithStatus): ExecutiveSummaryContent {
+function parseDatabaseDigest(dbDigest: DigestRecord): ExecutiveSummaryContent {
   const content = dbDigest.processed_content || {};
 
   return {

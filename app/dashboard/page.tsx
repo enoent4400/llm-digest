@@ -1,5 +1,3 @@
-// Premium Neobrutalist Dashboard - LLMDigest Design System
-// $50,000 agency-quality dashboard with brutalist aesthetics
 
 import { getUserDigests } from '@/lib/database/digests'
 import { DashboardClient } from './dashboard-client'
@@ -13,6 +11,7 @@ export default async function DashboardPage() {
 
   // Fetch user's digests
   const { data: digests, error: digestsError } = await getUserDigests(user.id, 50)
+  console.log('Fetched user digests:', digests)
   if (digestsError) {
     console.error('Error fetching user digests:', digestsError)
     // Optionally handle the error, e.g., show a notification

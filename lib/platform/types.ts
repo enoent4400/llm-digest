@@ -4,7 +4,8 @@ export enum Platform {
   CHATGPT = 'chatgpt',
   COPILOT = 'copilot',
   GEMINI = 'gemini',
-  GROK = 'grok'
+  GROK = 'grok',
+  PERPLEXITY = 'perplexity'
 }
 
 export interface PlatformConfig {

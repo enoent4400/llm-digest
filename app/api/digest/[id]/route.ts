@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDigestById, deleteDigest } from '@/lib/database/digests';
 
-// Default user ID for open-source version (no auth)
 const DEFAULT_USER_ID = 'anonymous';
 
 interface RouteParams {
@@ -61,12 +60,34 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-// Handle unsupported methods
-export async function GET() {
-  return NextResponse.json(
-    { error: 'Method not allowed. Use DELETE to remove digests.' },
-    { status: 405 }
-  );
+export async function GET(request: NextRequest, { params }: RouteParams) {
+  try {
+    // Await params as required in Next.js 15
+    const { id } = await params;
+
+    // Fetch the digest
+    const { data: digest, error } = await getDigestById(id);
+
+    if (error || !digest) {
+      return NextResponse.json(
+        { error: 'Digest not found' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(digest);
+
+  } catch (error) {
+    console.error('Digest fetch error:', error);
+
+    return NextResponse.json(
+      {
+        error: 'Internal server error while fetching digest',
+        code: 'DIGEST_FETCH_FAILED'
+      },
+      { status: 500 }
+    );
+  }
 }
 
 export async function POST() {

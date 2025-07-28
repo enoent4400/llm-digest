@@ -51,10 +51,22 @@ export function DeleteDigestModal({
         method: 'DELETE',
       })
 
+      console.log('Delete response status:', response.status)
+
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to delete digest')
+        let errorMessage = 'Failed to delete digest'
+        try {
+          const errorData = await response.json()
+          errorMessage = errorData.error || errorMessage
+        } catch (parseError) {
+          console.error('Error parsing error response:', parseError)
+          errorMessage = `Delete failed with status ${response.status}`
+        }
+        throw new Error(errorMessage)
       }
+
+      // Success - don't try to parse JSON, just proceed
+      console.log('Delete successful, status:', response.status)
 
       // Dismiss loading toast and show success
       toast.dismiss(loadingToastId)

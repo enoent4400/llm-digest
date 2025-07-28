@@ -39,13 +39,13 @@ import {
   PenTool
 } from 'lucide-react'
 import Link from 'next/link'
-import type { DigestWithStatus } from '@/types/database'
+import type { DigestRecord } from '@/types/database'
 
 interface DashboardClientProps {
   user: {
     email?: string;
   };
-  digests: DigestWithStatus[];
+  digests: DigestRecord[];
 }
 
 export function DashboardClient({ user, digests }: DashboardClientProps) {
@@ -55,7 +55,7 @@ export function DashboardClient({ user, digests }: DashboardClientProps) {
   const [statusFilter, setStatusFilter] = useState('all')
   const [sortBy, setSortBy] = useState('newest')
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
-  const [digestToDelete, setDigestToDelete] = useState<DigestWithStatus | null>(null)
+  const [digestToDelete, setDigestToDelete] = useState<DigestRecord | null>(null)
 
   // Auto-refresh for processing digests
   useEffect(() => {
@@ -96,9 +96,9 @@ export function DashboardClient({ user, digests }: DashboardClientProps) {
     .sort((a, b) => {
       switch (sortBy) {
         case 'newest':
-          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          return new Date(b.created).getTime() - new Date(a.created).getTime()
         case 'oldest':
-          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+          return new Date(a.created).getTime() - new Date(b.created).getTime()
         case 'title':
           return (a.title || a.conversation_title || '').localeCompare(b.title || b.conversation_title || '')
         default:
@@ -106,7 +106,7 @@ export function DashboardClient({ user, digests }: DashboardClientProps) {
       }
     })
 
-  const handleDeleteClick = (digest: DigestWithStatus, event: React.MouseEvent) => {
+  const handleDeleteClick = (digest: DigestRecord, event: React.MouseEvent) => {
     event.preventDefault(); // Prevent navigation
     event.stopPropagation();
     setDigestToDelete(digest);
@@ -489,7 +489,7 @@ export function DashboardClient({ user, digests }: DashboardClientProps) {
                             <div className="flex items-center justify-between text-xs text-gray-500 mt-auto pt-3">
                                 <span>
                                   {new Date(
-                                    digest.created_at
+                                    digest.created
                                   ).toLocaleDateString()}
                                 </span>
                                 <div className="flex items-center gap-2">

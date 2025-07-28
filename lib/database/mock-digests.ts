@@ -1,34 +1,7 @@
 // Mock database implementation for testing migration
 // In-memory database implementation for testing and development
 
-import { Platform } from '@/lib/platform/types';
-
-export interface DigestData {
-  user_id: string;
-  source_url: string;
-  source_platform: Platform;
-  conversation_title: string;
-  conversation_fingerprint: string;
-  title: string;
-  format: 'executive-summary' | 'action-plan' | 'faq' | 'mind-map';
-  processed_content: Record<string, unknown>;
-  input_tokens: number;
-  output_tokens: number;
-  estimated_cost: number;
-  model_used: string;
-  raw_content?: Record<string, unknown>;
-  metadata?: Record<string, unknown>;
-  status?: 'pending' | 'processing' | 'completed' | 'failed';
-}
-
-export interface DigestRecord extends DigestData {
-  id: string;
-  created: string;
-  updated: string;
-  // Legacy aliases for backward compatibility
-  created_at: string;
-  updated_at: string;
-}
+import { DigestData, DigestRecord } from '@/types/database';
 
 // In-memory storage (will be replaced with PocketBase)
 const mockDigests: Map<string, DigestRecord> = new Map();
@@ -48,11 +21,8 @@ export async function saveDigest(data: DigestData) {
   const record: DigestRecord = {
     ...data,
     id,
-    status: data.status || 'completed',
     created: now,
     updated: now,
-    created_at: now, // Legacy alias
-    updated_at: now, // Legacy alias
   };
   
   mockDigests.set(id, record);
@@ -73,7 +43,7 @@ export async function getDigestById(id: string) {
 export async function getUserDigests(userId: string, limit = 10) {
   const userDigests = Array.from(mockDigests.values())
     .filter(digest => digest.user_id === userId)
-    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    .sort((a, b) => new Date(b.created).getTime() - new Date(a.created).getTime())
     .slice(0, limit);
   
   return { data: userDigests, error: null };
@@ -91,7 +61,6 @@ export async function updateDigest(id: string, updates: Partial<DigestData>) {
     ...existing,
     ...updates,
     updated: updatedTime,
-    updated_at: updatedTime, // Legacy alias
   };
   
   mockDigests.set(id, updated);
