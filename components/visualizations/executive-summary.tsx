@@ -140,7 +140,7 @@ export function ExecutiveSummary({ digest, databaseDigest, showMetadata = false 
         duration: 2000,
         icon: <Icon icon={Check} size={16} className="text-white" />,
       });
-    } catch (error) {
+    } catch {
       toast.error("Failed to copy", {
         description: "Please try again or check your browser permissions.",
         duration: 3000,

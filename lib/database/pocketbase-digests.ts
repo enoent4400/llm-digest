@@ -1,6 +1,6 @@
 // PocketBase database implementation for digests
 
-import { DigestData, DigestRecord } from '@/types/database';
+import { DigestData, DigestRecord, DigestFormat, SourcePlatform } from '@/types/database';
 
 // PocketBase configuration
 const POCKETBASE_URL = process.env.POCKETBASE_URL || 'http://localhost:8090';
@@ -49,13 +49,13 @@ class PocketBaseClient {
 
     try {
       return JSON.parse(text);
-    } catch (error) {
+    } catch {
       console.error('Failed to parse JSON response:', text);
       throw new Error('Invalid JSON response from PocketBase');
     }
   }
 
-  async create(collection: string, data: any) {
+  async create(collection: string, data: Record<string, unknown>) {
     return this.request(`collections/${collection}/records`, {
       method: 'POST',
       body: JSON.stringify(data),
@@ -74,7 +74,7 @@ class PocketBaseClient {
     return this.request(`collections/${collection}/records?${params.toString()}`);
   }
 
-  async update(collection: string, id: string, data: any) {
+  async update(collection: string, id: string, data: Record<string, unknown>) {
     return this.request(`collections/${collection}/records/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(data),
@@ -91,7 +91,7 @@ class PocketBaseClient {
 const pb = new PocketBaseClient(POCKETBASE_URL);
 
 // Transform PocketBase record to our format
-function transformRecord(record: any): DigestRecord {
+function transformRecord(record: Record<string, unknown>): DigestRecord {
   // Compute status based on processed_content
   let status: 'pending' | 'processing' | 'completed' = 'pending';
   if (record.processed_content && Object.keys(record.processed_content).length > 0) {
@@ -101,30 +101,30 @@ function transformRecord(record: any): DigestRecord {
   }
 
   return {
-    id: record.id,
-    user_id: record.user_id,
-    source_url: record.source_url,
-    source_platform: record.source_platform,
-    conversation_title: record.conversation_title,
-    conversation_fingerprint: record.conversation_fingerprint,
-    title: record.title,
-    format: record.format,
-    processed_content: record.processed_content || {},
-    input_tokens: record.input_tokens || 0,
-    output_tokens: record.output_tokens || 0,
-    estimated_cost: record.estimated_cost || 0,
-    model_used: record.model_used || '',
-    raw_content: record.raw_content,
-    metadata: record.metadata,
-    created: record.created || new Date().toISOString(),
-    updated: record.updated || record.created || new Date().toISOString(),
+    id: record.id as string,
+    user_id: record.user_id as string,
+    source_url: record.source_url as string,
+    source_platform: record.source_platform as SourcePlatform,
+    conversation_title: record.conversation_title as string,
+    conversation_fingerprint: record.conversation_fingerprint as string,
+    title: record.title as string,
+    format: record.format as DigestFormat,
+    processed_content: record.processed_content as Record<string, unknown> || {},
+    input_tokens: (record.input_tokens as number) || 0,
+    output_tokens: (record.output_tokens as number) || 0,
+    estimated_cost: (record.estimated_cost as number) || 0,
+    model_used: (record.model_used as string) || '',
+    raw_content: record.raw_content as Record<string, unknown>,
+    metadata: record.metadata as Record<string, unknown> | undefined,
+    created: (record.created as string) || new Date().toISOString(),
+    updated: (record.updated as string) || (record.created as string) || new Date().toISOString(),
     status,
   };
 }
 
 export async function saveDigest(data: DigestData) {
   try {
-    const record = await pb.create(COLLECTION_NAME, data);
+    const record = await pb.create(COLLECTION_NAME, data as unknown as Record<string, unknown>);
     return { data: transformRecord(record), error: null };
   } catch (error) {
     return { data: null, error: { message: error instanceof Error ? error.message : 'Unknown error' } };
@@ -154,7 +154,7 @@ export async function getUserDigests(userId: string, limit = 10) {
 
 export async function updateDigest(id: string, updates: Partial<DigestData>) {
   try {
-    const record = await pb.update(COLLECTION_NAME, id, updates);
+    const record = await pb.update(COLLECTION_NAME, id, updates as unknown as Record<string, unknown>);
     return { data: transformRecord(record), error: null };
   } catch (error) {
     return { data: null, error: { message: error instanceof Error ? error.message : 'Unknown error' } };

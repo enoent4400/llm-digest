@@ -10,7 +10,7 @@ interface UniversalConversation {
   fingerprint?: string;
 }
 import { getModel, calculateActualCost, type TotalCostBreakdown, openai } from './router';
-import { getDigestPrompt, DIGEST_FORMAT_PROMPTS } from './prompts';
+import { getDigestPrompt } from './prompts';
 import type { DigestFormat } from '@/types/database';
 
 export interface DigestResult {

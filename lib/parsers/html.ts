@@ -88,7 +88,7 @@ export async function extractFromPage(
     
     try {
       await page.goto(url, { 
-        waitUntil: waitStrategy as any,
+        waitUntil: waitStrategy as 'load' | 'domcontentloaded' | 'networkidle0' | 'networkidle2',
         timeout: options.timeout || DEFAULT_BROWSER_OPTIONS.timeout
       });
     } catch (navError) {
@@ -122,7 +122,7 @@ export async function extractFromPage(
           timeout: options.timeout || DEFAULT_BROWSER_OPTIONS.timeout
         });
         console.log(`Found selector: ${options.waitForSelector}`);
-      } catch (selectorError) {
+      } catch {
         console.log(`Selector not found: ${options.waitForSelector}`);
         
         // Check what elements are actually available
