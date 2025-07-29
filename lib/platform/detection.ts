@@ -31,6 +31,12 @@ export const PLATFORM_CONFIGS: Record<Platform, PlatformConfig> = {
     urlPattern: /^https:\/\/grok\.com\/share\/[a-zA-Z0-9_-]+$/,
     extractionMethod: 'html',
     hasInternalApi: false
+  },
+  [Platform.PERPLEXITY]: {
+    name: 'Perplexity',
+    urlPattern: /^https:\/\/www\.perplexity\.ai\/search\/[a-zA-Z0-9_-]+$/,
+    extractionMethod: 'html',
+    hasInternalApi: false
   }
 };
 

@@ -67,7 +67,7 @@ describe('POST /api/digest/create - Database Integration', () => {
     });
 
     // Act - Test the business logic integration
-    const aiResult = await createDigest(mockConversation);
+    const aiResult = await createDigest(mockConversation, 'executive-summary');
     const digestData = {
       user_id: 'test-user-123',
       source_url: `https://claude.ai/share/${mockConversation.id}`,
@@ -85,7 +85,7 @@ describe('POST /api/digest/create - Database Integration', () => {
     await saveDigest(digestData);
 
     // Assert
-    expect(createDigest).toHaveBeenCalledWith(mockConversation);
+    expect(createDigest).toHaveBeenCalledWith(mockConversation, 'executive-summary');
     expect(saveDigest).toHaveBeenCalledWith({
       user_id: 'test-user-123',
       source_url: 'https://claude.ai/share/test-conv-123',

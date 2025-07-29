@@ -10,7 +10,8 @@ interface UniversalConversation {
   fingerprint?: string;
 }
 import { getModel, calculateActualCost, type TotalCostBreakdown, openai } from './router';
-import { getDigestPrompt } from './prompts';
+import { getDigestPrompt, DIGEST_FORMAT_PROMPTS } from './prompts';
+import type { DigestFormat } from '@/types/database';
 
 export interface DigestResult {
   digest: string;
@@ -26,7 +27,7 @@ export interface DigestResult {
   };
 }
 
-export async function createDigest(conversation: UniversalConversation): Promise<DigestResult> {
+export async function createDigest(conversation: UniversalConversation, format: DigestFormat = 'executive-summary'): Promise<DigestResult> {
   // Step 1: Get model (simplified - no complexity analysis needed)
   const modelSelection = getModel();
 
@@ -36,7 +37,7 @@ export async function createDigest(conversation: UniversalConversation): Promise
     .join('\n\n');
 
   // Step 3: Generate digest using OpenRouter API with retry logic
-  const prompt = getDigestPrompt(conversationContent, conversation.title);
+  const prompt = getDigestPrompt(conversationContent, conversation.title, format);
   
   let response;
   let retries = 3;

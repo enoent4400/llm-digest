@@ -26,9 +26,12 @@ import {
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 import { Icon } from "@/components/ui/icon"
-import { PartyPopper, Rocket, } from "lucide-react"
+import { PartyPopper, Rocket, BarChart3, ListTodo, MessageSquare, GitBranch, Network, Code, GanttChart, TreePine, FileText } from "lucide-react"
+import { getAvailableFormats } from "@/lib/ai/prompts"
 
 const formSchema = z.object({
   claudeUrl: z.string()
@@ -36,6 +39,7 @@ const formSchema = z.object({
     .refine((url) => url.includes("claude.ai") || url.includes("chatgpt.com") || url.includes("gemini") || url.includes("copilot.microsoft.com") || url.includes("grok"), {
       message: "Please enter a valid AI chat share link",
     }),
+  format: z.enum(['executive-summary', 'action-plan', 'faq', 'mind-map', 'knowledge-graph', 'code-organization', 'gantt-chart', 'decision-tree', 'blog-post']),
 })
 
 interface CreateDigestDialogProps {
@@ -78,8 +82,22 @@ export function CreateDigestDialog({ children }: CreateDigestDialogProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       claudeUrl: "",
+      format: "executive-summary",
     },
   })
+
+  // Format metadata for display
+  const formatInfo = {
+    'executive-summary': { label: 'Executive Summary', icon: BarChart3, description: 'Key insights and actionable takeaways' },
+    'action-plan': { label: 'Action Plan', icon: ListTodo, description: 'Structured steps and implementation guidance' },
+    'faq': { label: 'FAQ', icon: MessageSquare, description: 'Questions and answers from the conversation' },
+    'mind-map': { label: 'Mind Map', icon: GitBranch, description: 'Visual topic relationships and hierarchy' },
+    'knowledge-graph': { label: 'Knowledge Graph', icon: Network, description: 'Entities and their connections' },
+    'code-organization': { label: 'Code Blocks', icon: Code, description: 'Extract and organize code snippets' },
+    'gantt-chart': { label: 'Gantt Chart', icon: GanttChart, description: 'Project timeline and dependencies' },
+    'decision-tree': { label: 'Decision Tree', icon: TreePine, description: 'Decision points and outcomes' },
+    'blog-post': { label: 'Blog Post', icon: FileText, description: 'Well-structured article format' },
+  } as const
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true)
@@ -109,7 +127,10 @@ export function CreateDigestDialog({ children }: CreateDigestDialogProps) {
       const digestResponse = await fetch('/api/digest/create-from-url', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: values.claudeUrl })
+        body: JSON.stringify({ 
+          url: values.claudeUrl, 
+          options: { format: values.format }
+        })
       })
 
       if (!digestResponse.ok) {
@@ -166,7 +187,7 @@ export function CreateDigestDialog({ children }: CreateDigestDialogProps) {
       <DialogTrigger asChild>
         {children}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle className="text-2xl font-semibold text-gray-100 flex items-center gap-2">
             <Icon icon={Rocket} size={24} className="text-accent-primary" />
@@ -194,6 +215,51 @@ export function CreateDigestDialog({ children }: CreateDigestDialogProps) {
                   <FormDescription className="text-xs text-gray-500">
                     Make your conversation public, then paste the share link here.
                   </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="format"
+              render={({ field }) => (
+                <FormItem>
+                  <Label className="text-sm font-medium text-gray-200">Digest Format</Label>
+                  <FormControl>
+                    <Select
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      disabled={isSubmitting}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Choose a digest format">
+                          {field.value && (
+                            <div className="flex items-center gap-2">
+                              <Icon icon={formatInfo[field.value as keyof typeof formatInfo].icon} size={16} className="text-accent-primary" />
+                              <span>{formatInfo[field.value as keyof typeof formatInfo].label}</span>
+                            </div>
+                          )}
+                        </SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {getAvailableFormats().map((format) => {
+                          const info = formatInfo[format];
+                          return (
+                            <SelectItem key={format} value={format}>
+                              <div className="flex items-center gap-3 py-1">
+                                <Icon icon={info.icon} size={16} className="text-accent-primary shrink-0" />
+                                <div>
+                                  <div className="text-sm font-medium">{info.label}</div>
+                                  <div className="text-xs text-gray-500">{info.description}</div>
+                                </div>
+                              </div>
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}

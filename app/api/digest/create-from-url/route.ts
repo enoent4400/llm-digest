@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createDigest, type DigestResult } from '@/lib/ai';
 import { saveDigest, getDigestByFingerprint, updateDigest } from '@/lib/database/digests';
 import { extractConversation } from '@/lib/parsers';
+import type { DigestFormat } from '@/types/database';
 
 // Default user ID for open-source version (no auth)
 const DEFAULT_USER_ID = 'anonymous';
@@ -12,7 +13,7 @@ const DEFAULT_USER_ID = 'anonymous';
 interface CreateFromUrlRequest {
   url: string;
   options?: {
-    visualizationType?: 'executive-summary' | 'knowledge-graph' | 'code-organization' | 'mind-map' | 'gantt-chart' | 'decision-tree' | 'blog-post';
+    format?: DigestFormat;
     regenerate?: boolean;
     existingDigestId?: string;
   };
@@ -102,15 +103,54 @@ export async function POST(request: NextRequest) {
     console.log(`Creating digest for ${conversation.platform} conversation: ${conversation.title}`);
 
     // Create digest using smart model selection
-    const result: DigestResult = await createDigest(formattedConversation);
+    const digestFormat = options.format || 'executive-summary';
+    const result: DigestResult = await createDigest(formattedConversation, digestFormat);
 
     // Save digest to database
     let processedContent;
     try {
-      processedContent = JSON.parse(result.digest);
+      // Clean the digest response - remove any potential wrapper text or whitespace
+      let cleanDigest = result.digest.trim();
+      
+      // Remove markdown code block wrapper if present
+      if (cleanDigest.startsWith('```json\n')) {
+        cleanDigest = cleanDigest.replace(/^```json\n/, '').replace(/\n```$/, '');
+      } else if (cleanDigest.startsWith('```\n')) {
+        cleanDigest = cleanDigest.replace(/^```\n/, '').replace(/\n```$/, '');
+      }
+      
+      // Try to parse the cleaned JSON
+      processedContent = JSON.parse(cleanDigest);
+      
+      console.log('Successfully parsed digest JSON');
     } catch (error) {
-      console.error('Failed to parse digest JSON:', result.digest);
-      processedContent = { error: 'Invalid JSON response', raw: result.digest };
+      console.error('Failed to parse cleaned digest JSON. Error:', error instanceof Error ? error.message : String(error));
+      
+      // Try parsing the original raw response as a fallback
+      try {
+        console.log('Attempting to parse original raw response...');
+        processedContent = JSON.parse(result.digest);
+        console.log('Successfully parsed original raw digest JSON');
+      } catch (secondError) {
+        console.error('Both cleaned and raw parsing failed. Second error:', secondError instanceof Error ? secondError.message : String(secondError));
+        console.error('Raw digest length:', result.digest.length);
+        console.error('First 500 chars:', result.digest.substring(0, 500));
+        console.error('Last 500 chars:', result.digest.substring(Math.max(0, result.digest.length - 500)));
+        
+        // Try to provide more specific error information
+        let errorDetails = 'Unknown parsing error';
+        if (error instanceof Error) {
+          errorDetails = error.message;
+        }
+        
+        processedContent = { 
+          error: 'Invalid JSON response', 
+          raw: result.digest,
+          parseError: errorDetails,
+          secondParseError: secondError instanceof Error ? secondError.message : String(secondError),
+          digestLength: result.digest.length
+        };
+      }
     }
 
     const digestTitle = processedContent?.title || conversation.title;
@@ -141,7 +181,7 @@ export async function POST(request: NextRequest) {
         conversation_title: conversation.title,
         conversation_fingerprint: fingerprint,
         title: digestTitle,
-        format: 'executive-summary' as const,
+        format: digestFormat,
         status: 'completed' as const,
         raw_content: conversation,
         processed_content: processedContent,

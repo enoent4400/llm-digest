@@ -223,6 +223,29 @@ export interface CodeOrganizationContent {
   metadata: DigestMetadata;
 }
 
+// === Code Blocks Digest Structure ===
+
+export interface CodeBlock {
+  id: string;
+  filename: string;
+  language: string;
+  code: string;
+  description: string;
+  messageIndex: number;
+  blockIndex: number;
+}
+
+export interface CodeBlocksContent {
+  title: string;
+  hasCodeBlocks: boolean;
+  summary: string;
+  blocks: CodeBlock[];
+  metadata: DigestMetadata & {
+    totalBlocks: number;
+    languages: string[];
+  };
+}
+
 // === Gantt Chart Digest Structure ===
 
 export interface GanttTask {
@@ -327,13 +350,14 @@ export interface BlogPostContent {
 
 // === Union type for all digest content formats ===
 
-export type DigestContent = 
+export type DigestContent =
   | ExecutiveSummaryContent
   | ActionPlanContent
   | FAQContent
   | MindMapContent
   | KnowledgeGraphContent
   | CodeOrganizationContent
+  | CodeBlocksContent
   | GanttChartContent
   | DecisionTreeContent
   | BlogPostContent;
@@ -363,6 +387,10 @@ export function isCodeOrganization(content: DigestContent): content is CodeOrgan
   return 'sections' in content && 'architecture' in content;
 }
 
+export function isCodeBlocks(content: DigestContent): content is CodeBlocksContent {
+  return 'languages' in content && Array.isArray((content as any).languages);
+}
+
 export function isGanttChart(content: DigestContent): content is GanttChartContent {
   return 'tasks' in content && 'phases' in content && 'timeline' in content;
 }
@@ -377,7 +405,7 @@ export function isBlogPost(content: DigestContent): content is BlogPostContent {
 
 // Processing options for different digest types
 export interface DigestProcessingOptions {
-  format: 'executive-summary' | 'action-plan' | 'faq' | 'mind-map' | 'knowledge-graph' | 'code-organization' | 'gantt-chart' | 'decision-tree' | 'blog-post';
+  format: 'executive-summary' | 'action-plan' | 'faq' | 'mind-map' | 'knowledge-graph' | 'code-organization' | 'code-blocks' | 'gantt-chart' | 'decision-tree' | 'blog-post';
   complexity?: ComplexityLevel;
   maxLength?: number;
   includeMetadata?: boolean;

@@ -14,6 +14,7 @@ import {
 import { Icon } from '@/components/ui/icon';
 import { Settings, FileText, RotateCcw, Trash2, BarChart3, Construction } from 'lucide-react';
 import { ExecutiveSummary } from '@/components/visualizations/executive-summary';
+import { SimpleCodeBlocksDigest } from '@/components/visualizations/code-blocks/SimpleCodeBlocksDigest';
 import Link from 'next/link';
 import { useState } from 'react';
 import type { KeyInsight, PracticalTakeaway, ShareableQuote } from '@/types/digest';
@@ -81,11 +82,11 @@ export default function DigestPage({ initialDigest }: DigestPageProps) {
 
   return (
     <div className="min-h-screen bg-background">
-      <AppHeader maxWidth="max-w-4xl" />
+      <AppHeader maxWidth="max-w-6xl" />
 
       {/* Page Header */}
       <div className="bg-bg-secondary">
-        <div className="max-w-4xl mx-auto px-6 py-6">
+        <div className="max-w-6xl mx-auto px-6 py-6">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-semibold text-gray-100">
@@ -144,7 +145,7 @@ export default function DigestPage({ initialDigest }: DigestPageProps) {
 
 
       {/* Content */}
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      <div className="max-w-6xl mx-auto px-6 py-8">
         {/* Metadata Card */}
         <Card className="mb-8">
           <CardHeader>
@@ -209,8 +210,15 @@ export default function DigestPage({ initialDigest }: DigestPageProps) {
           />
         )}
 
+        {digest.format === 'code-organization' && digest.processed_content && (
+          <SimpleCodeBlocksDigest
+            databaseDigest={digest}
+            showMetadata={true}
+          />
+        )}
+
         {/* Future: Add other visualization types */}
-        {digest.format !== 'executive-summary' && (
+        {!['executive-summary', 'code-organization'].includes(digest.format) && (
           <Card>
             <CardContent className="text-center py-12">
               <div className="w-24 h-24 bg-gray-800 border border-gray-700 mx-auto mb-4 flex items-center justify-center rounded-lg">
