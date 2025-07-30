@@ -23,10 +23,10 @@ export interface ExtractionResult {
 
 export async function extractConversation(url: string): Promise<ExtractionResult> {
   const startTime = Date.now();
-  
+
   try {
     const platformResult = detectPlatform(url);
-    
+
     if (!platformResult.success) {
       return {
         success: false,
@@ -41,12 +41,12 @@ export async function extractConversation(url: string): Promise<ExtractionResult
 
     const platform = platformResult.platform!;
     let result;
-    
+
     switch (platform) {
       case Platform.CHATGPT:
         if (!isValidChatGptUrl(url)) {
-          return { 
-            success: false, 
+          return {
+            success: false,
             error: 'Invalid ChatGPT URL format',
             metadata: { extractionTime: Date.now() - startTime, method: 'html', messageCount: 0 }
           };
@@ -56,8 +56,8 @@ export async function extractConversation(url: string): Promise<ExtractionResult
 
       case Platform.CLAUDE:
         if (!isValidClaudeShareUrl(url)) {
-          return { 
-            success: false, 
+          return {
+            success: false,
             error: 'Invalid Claude URL format',
             metadata: { extractionTime: Date.now() - startTime, method: 'json', messageCount: 0 }
           };
@@ -79,8 +79,8 @@ export async function extractConversation(url: string): Promise<ExtractionResult
 
       case Platform.GEMINI:
         if (!isValidGeminiUrl(url)) {
-          return { 
-            success: false, 
+          return {
+            success: false,
             error: 'Invalid Gemini URL format',
             metadata: { extractionTime: Date.now() - startTime, method: 'html', messageCount: 0 }
           };
@@ -90,8 +90,8 @@ export async function extractConversation(url: string): Promise<ExtractionResult
 
       case Platform.COPILOT:
         if (!isValidCopilotUrl(url)) {
-          return { 
-            success: false, 
+          return {
+            success: false,
             error: 'Invalid Copilot URL format',
             metadata: { extractionTime: Date.now() - startTime, method: 'json', messageCount: 0 }
           };
@@ -101,8 +101,8 @@ export async function extractConversation(url: string): Promise<ExtractionResult
 
       case Platform.GROK:
         if (!isValidGrokUrl(url)) {
-          return { 
-            success: false, 
+          return {
+            success: false,
             error: 'Invalid Grok URL format',
             metadata: { extractionTime: Date.now() - startTime, method: 'md', messageCount: 0 }
           };
@@ -123,7 +123,7 @@ export async function extractConversation(url: string): Promise<ExtractionResult
     }
 
     const extractionTime = Date.now() - startTime;
-    
+
     if (!result.success) {
       return {
         success: false,
@@ -165,13 +165,12 @@ export async function extractConversation(url: string): Promise<ExtractionResult
 function getMethodForPlatform(platform: Platform): string {
   switch (platform) {
     case Platform.CHATGPT:
+    case Platform.GROK:
     case Platform.GEMINI:
       return 'html';
     case Platform.CLAUDE:
     case Platform.COPILOT:
       return 'json';
-    case Platform.GROK:
-      return 'md';
     default:
       return 'unknown';
   }
