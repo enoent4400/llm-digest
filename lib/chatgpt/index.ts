@@ -25,11 +25,11 @@ export async function parseChatGptConversation(
       extractMessages: extractChatGptMessages,
       extractTitle: extractChatGptTitle
     });
-    
+
     if (result.success && result.conversation) {
       result.conversation.platform = Platform.CHATGPT;
     }
-    
+
     return result;
   } catch (error) {
     return {
@@ -41,10 +41,49 @@ export async function parseChatGptConversation(
 
 async function extractChatGptMessages(): Promise<ConversationMessage[]> {
   const messageElements = document.querySelectorAll('[data-turn]');
-  return Array.from(messageElements).map(element => ({
-    role: element.getAttribute('data-turn') as 'user' | 'assistant',
-    content: element.textContent?.trim() || ''
-  })).filter(msg => msg.content && (msg.role === 'user' || msg.role === 'assistant'));
+  return Array.from(messageElements).map(element => {
+    const role = element.getAttribute('data-turn') as 'user' | 'assistant';
+
+    // Extract code blocks with language information
+    const codeBlocks = Array.from(element.querySelectorAll('code')).map(codeElement => {
+      const languageMatch = codeElement.className.match(/language-(\w+)/);
+      const language = languageMatch ? languageMatch[1] : 'unknown';
+      return {
+        language: language,
+        content: codeElement.textContent?.trim() || ''
+      };
+    });
+
+    // Get the text content excluding code blocks
+    let content = element.textContent?.trim() || '';
+
+    // If we have code blocks, replace them with JSON-friendly formatted versions
+    if (codeBlocks.length > 0) {
+      // Create a temporary element to manipulate the content
+      const tempElement = element.cloneNode(true) as HTMLElement;
+
+      // Replace each code block with a formatted version that's JSON-safe
+      tempElement.querySelectorAll('code').forEach((codeElement, index) => {
+        const codeBlock = codeBlocks[index];
+        // Use a JSON-safe format with escaped characters
+        const formattedCode = `
+          CODE_BLOCK_START:${codeBlock.language}:${encodeURIComponent(codeBlock.content)}:CODE_BLOCK_END
+        `;
+
+        // Replace the code element with a text node containing the formatted code
+        const textNode = document.createTextNode(formattedCode);
+        codeElement.parentNode?.replaceChild(textNode, codeElement);
+      });
+
+      // Get the final content with formatted code blocks
+      content = tempElement.textContent?.trim() || '';
+    }
+
+    return {
+      role: role,
+      content: content
+    };
+  }).filter(msg => msg.content && (msg.role === 'user' || msg.role === 'assistant'));
 }
 
 async function extractChatGptTitle(): Promise<string> {
