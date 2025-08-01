@@ -128,50 +128,53 @@ async function extractGeminiMessages(): Promise<ConversationMessage[]> {
 
         // Check if there's a comment indicating the file type
         const firstLine = codeElement.textContent?.trim().split('\n')[0] || '';
-        if (firstLine.startsWith('#') && firstLine.includes('.py')) {
-          language = 'python';
-        } else if (firstLine.includes('.js') || firstLine.includes('.ts')) {
-          language = 'javascript';
-        } else if (firstLine.includes('.java')) {
-          language = 'java';
-        } else if (firstLine.includes('.cpp') || firstLine.includes('.c++')) {
-          language = 'cpp';
-        } else if (firstLine.includes('.c')) {
-          language = 'c';
-        } else if (firstLine.includes('.go')) {
-          language = 'go';
-        } else if (firstLine.includes('.rs')) {
-          language = 'rust';
-        } else if (firstLine.includes('.rb')) {
-          language = 'ruby';
-        } else if (firstLine.includes('.php')) {
-          language = 'php';
-        } else if (firstLine.includes('.swift')) {
-          language = 'swift';
-        } else if (firstLine.includes('.kt')) {
-          language = 'kotlin';
-        } else if (firstLine.includes('.scala')) {
-          language = 'scala';
-        } else if (firstLine.includes('.r')) {
-          language = 'r';
-        } else if (firstLine.includes('.m')) {
-          language = 'matlab';
-        } else if (firstLine.includes('.sh') || firstLine.includes('.bash')) {
-          language = 'bash';
-        } else if (firstLine.includes('.sql')) {
-          language = 'sql';
-        } else if (firstLine.includes('.html')) {
-          language = 'html';
-        } else if (firstLine.includes('.css')) {
-          language = 'css';
-        } else if (firstLine.includes('.xml')) {
-          language = 'xml';
-        } else if (firstLine.includes('.json')) {
-          language = 'json';
-        } else if (firstLine.includes('.yaml') || firstLine.includes('.yml')) {
-          language = 'yaml';
-        } else if (firstLine.includes('.md')) {
-          language = 'markdown';
+        if (firstLine.startsWith('#')) {
+          // More precise file extension matching to avoid substring matches
+          if (/\.(py|pyw|py3)$/.test(firstLine)) {
+            language = 'python';
+          } else if (/\.(js|ts|jsx|tsx)$/.test(firstLine)) {
+            language = 'javascript';
+          } else if (/\.(java)$/.test(firstLine)) {
+            language = 'java';
+          } else if (/\.(cpp|c\+\+|cc|cxx)$/.test(firstLine)) {
+            language = 'cpp';
+          } else if (/\.(c|h)$/.test(firstLine)) {
+            language = 'c';
+          } else if (/\.(go)$/.test(firstLine)) {
+            language = 'go';
+          } else if (/\.(rs)$/.test(firstLine)) {
+            language = 'rust';
+          } else if (/\.(rb)$/.test(firstLine)) {
+            language = 'ruby';
+          } else if (/\.(php)$/.test(firstLine)) {
+            language = 'php';
+          } else if (/\.(swift)$/.test(firstLine)) {
+            language = 'swift';
+          } else if (/\.(kt|kts)$/.test(firstLine)) {
+            language = 'kotlin';
+          } else if (/\.(scala)$/.test(firstLine)) {
+            language = 'scala';
+          } else if (/\.(r)$/.test(firstLine)) {
+            language = 'r';
+          } else if (/\.(m)$/.test(firstLine)) {
+            language = 'matlab';
+          } else if (/\.(sh|bash)$/.test(firstLine)) {
+            language = 'bash';
+          } else if (/\.(sql)$/.test(firstLine)) {
+            language = 'sql';
+          } else if (/\.(html|htm)$/.test(firstLine)) {
+            language = 'html';
+          } else if (/\.(css)$/.test(firstLine)) {
+            language = 'css';
+          } else if (/\.(xml)$/.test(firstLine)) {
+            language = 'xml';
+          } else if (/\.(json)$/.test(firstLine)) {
+            language = 'json';
+          } else if (/\.(yaml|yml)$/.test(firstLine)) {
+            language = 'yaml';
+          } else if (/\.(md|markdown)$/.test(firstLine)) {
+            language = 'markdown';
+          }
         }
 
         // Also check for hljs classes that might indicate language
