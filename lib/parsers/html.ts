@@ -107,6 +107,12 @@ export async function extractFromPage(
     console.log(`Page loaded successfully. Final URL: ${page.url()}`);
     console.log(`Page title: ${await page.title()}`);
 
+    // For Gemini, wait a bit longer for dynamic content to load
+    if (isGemini) {
+      console.log('Waiting for dynamic content to load...');
+      await new Promise(resolve => setTimeout(resolve, 3000));
+    }
+
 
     const messages = await page.evaluate(options.extractMessages);
     const title = await page.evaluate(options.extractTitle);
@@ -134,7 +140,7 @@ export async function extractFromPage(
       error: `HTML extraction failed: ${errorMessage}`
     };
   } finally {
-    if (page) await page.close().catch(() => {});
-    if (browser) await browser.close().catch(() => {});
+    if (page) await page.close().catch(() => { });
+    if (browser) await browser.close().catch(() => { });
   }
 }

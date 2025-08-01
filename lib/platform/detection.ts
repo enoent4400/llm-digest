@@ -22,7 +22,7 @@ export const PLATFORM_CONFIGS: Record<Platform, PlatformConfig> = {
   },
   [Platform.GEMINI]: {
     name: 'Google Gemini',
-    urlPattern: /^https:\/\/(g\.co\/gemini\/share|gemini\.google\.com\/share)\/[a-zA-Z0-9]+$/,
+    urlPattern: /^https:\/\/(g\.co\/gemini\/share|gemini\.google\.com\/(share|app))\/[a-zA-Z0-9]+/,
     extractionMethod: 'html',
     hasInternalApi: false
   },
@@ -62,7 +62,7 @@ export function detectPlatform(url: string): PlatformDetectionResult {
       };
     }
   }
-  
+
   return {
     success: false,
     error: 'Unsupported platform URL format'
