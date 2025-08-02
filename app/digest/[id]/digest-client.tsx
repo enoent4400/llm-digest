@@ -16,6 +16,7 @@ import { Settings, FileText, RotateCcw, Trash2, BarChart3, Construction } from '
 import { ExecutiveSummary } from '@/components/visualizations/executive-summary';
 import { SimpleCodeBlocksDigest } from '@/components/visualizations/code-blocks/SimpleCodeBlocksDigest';
 import { ActionPlanBoard } from '@/components/visualizations/action-plan';
+import { FAQAccordion } from '@/components/visualizations/faq';
 import Link from 'next/link';
 import { useState } from 'react';
 import type { KeyInsight, PracticalTakeaway, ShareableQuote } from '@/types/digest';
@@ -225,8 +226,15 @@ export default function DigestPage({ initialDigest }: DigestPageProps) {
           />
         )}
 
+        {digest.format === 'faq' && digest.processed_content && (
+          <FAQAccordion
+            databaseDigest={digest}
+            showMetadata={true}
+          />
+        )}
+
         {/* Future: Add other visualization types */}
-        {!['executive-summary', 'code-organization', 'action-plan'].includes(digest.format) && (
+        {!['executive-summary', 'code-organization', 'action-plan', 'faq'].includes(digest.format) && (
           <Card>
             <CardContent className="text-center py-12">
               <div className="w-24 h-24 bg-gray-800 border border-gray-700 mx-auto mb-4 flex items-center justify-center rounded-lg">

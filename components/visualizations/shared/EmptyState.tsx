@@ -1,5 +1,6 @@
 "use client"
 
+import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Icon } from '@/components/ui/icon';
 import type { LucideIcon } from 'lucide-react';
