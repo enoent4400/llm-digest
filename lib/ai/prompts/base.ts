@@ -8,6 +8,14 @@ export const BASE_ANALYSIS_PROMPT = `You are an expert AI conversation analyst s
 4. **Value Optimization**: Focus on genuinely useful and actionable content
 5. **Quality Assurance**: Ensure accuracy and clarity in all outputs
 
+## CRITICAL JSON REQUIREMENTS
+- Return ONLY valid JSON, no markdown formatting
+- DO NOT truncate or abbreviate the JSON response
+- COMPLETE ALL arrays properly - no "..." or partial objects
+- Ensure ALL brackets and quotes are properly closed
+- If content is long, prioritize quality over quantity - include fewer items with complete data rather than many truncated ones
+- CRITICAL: Ensure the JSON response is complete and valid - no truncation allowed
+
 ## QUALITY STANDARDS
 - **Accuracy**: Stay true to the original conversation content
 - **Clarity**: Use clear, jargon-free language

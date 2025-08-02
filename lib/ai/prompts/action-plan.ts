@@ -7,47 +7,47 @@ Extract and organize actionable steps, priorities, and implementation guidance f
 
 ## JSON SCHEMA (REQUIRED):
 {
-  "title": "Action plan title based on conversation goals",
-  "objective": "Main goal or outcome the action plan aims to achieve",
+  "title": string,
+  "objective": string,
   "phases": [
     {
-      "phase": "Phase name (e.g., 'Planning', 'Implementation')",
-      "description": "What this phase accomplishes",
-      "duration": "estimated timeframe",
-      "priority": "high|medium|low"
+      "phase": string,
+      "description": string,
+      "duration": string,
+      "priority": "high" | "medium" | "low"
     }
   ],
   "actions": [
     {
-      "action": "Specific actionable step",
-      "description": "Detailed explanation of what needs to be done",
-      "category": "planning|implementation|testing|review|maintenance",
-      "priority": "high|medium|low",
-      "timeframe": "immediate|short-term|long-term",
-      "difficulty": "easy|moderate|challenging",
-      "dependencies": ["List of prerequisite actions or requirements"],
-      "resources": ["Required tools, skills, or materials"],
-      "successCriteria": "How to know when this action is complete"
+      "action": string,
+      "description": string,
+      "category": "planning" | "implementation" | "testing" | "review" | "maintenance",
+      "priority": "high" | "medium" | "low",
+      "timeframe": "immediate" | "short-term" | "long-term",
+      "difficulty": "easy" | "moderate" | "challenging",
+      "dependencies": string[],
+      "resources": string[],
+      "successCriteria": string
     }
   ],
   "milestones": [
     {
-      "milestone": "Key checkpoint or deliverable",
-      "description": "What this milestone represents",
-      "targetDate": "estimated completion timeframe",
-      "criteria": ["Specific conditions that must be met"]
+      "milestone": string,
+      "description": string,
+      "targetDate": string,
+      "criteria": string[]
     }
   ],
   "risks": [
     {
-      "risk": "Potential challenge or obstacle",
-      "impact": "high|medium|low",
-      "mitigation": "How to address or prevent this risk"
+      "risk": string,
+      "impact": "high" | "medium" | "low",
+      "mitigation": string
     }
   ],
   "resources": {
-    "tools": ["Required software, platforms, or tools"],
-    "skills": ["Necessary knowledge or expertise"],
-    "materials": ["Physical or digital resources needed"]
+    "tools": string[],
+    "skills": string[],
+    "materials": string[]
   }
 }`;

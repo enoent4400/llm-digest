@@ -7,53 +7,53 @@ Create a comprehensive executive summary that captures the conversation's key in
 
 ## JSON SCHEMA (REQUIRED):
 {
-  "title": "Concise conversation title (max 60 chars)",
-  "summary": "2-3 sentence overview of the conversation's main purpose and outcome",
+  "title": string,
+  "summary": string,
   "mainTopics": [
     {
-      "topic": "Topic name",
-      "description": "Brief explanation",
-      "importance": "high|medium|low"
+      "topic": string,
+      "description": string,
+      "importance": "high" | "medium" | "low"
     }
   ],
   "keyInsights": [
     {
-      "insight": "Clear, actionable insight",
-      "category": "learning|strategy|tool|concept|warning",
-      "applicability": "Description of when/how to apply this",
-      "confidence": "high|medium|low"
+      "insight": string,
+      "category": "learning" | "strategy" | "tool" | "concept" | "warning",
+      "applicability": string,
+      "confidence": "high" | "medium" | "low"
     }
   ],
   "importantQuestions": [
     {
-      "question": "The actual question asked",
-      "answer": "Concise answer provided",
-      "relevance": "Why this Q&A matters"
+      "question": string,
+      "answer": string,
+      "relevance": string
     }
   ],
   "conversationFlow": {
-    "startingPoint": "What the conversation began with",
-    "keyTransitions": ["Major topic shifts or breakthroughs"],
-    "conclusion": "How the conversation ended or was resolved"
+    "startingPoint": string,
+    "keyTransitions": string[],
+    "conclusion": string
   },
   "practicalTakeaways": [
     {
-      "action": "Specific actionable step",
-      "timeframe": "immediate|short-term|long-term",
-      "difficulty": "easy|moderate|challenging"
+      "action": string,
+      "timeframe": "immediate" | "short-term" | "long-term",
+      "difficulty": "easy" | "moderate" | "challenging"
     }
   ],
   "shareableQuotes": [
     {
-      "text": "Most insightful or quotable moment",
-      "context": "Why this quote is valuable",
-      "author": "Human|Assistant"
+      "text": string,
+      "context": string,
+      "author": "Human" | "Assistant"
     }
   ],
   "metadata": {
-    "conversationLength": "Number of message exchanges",
-    "complexity": "simple|moderate|complex",
-    "domain": "Primary subject area (tech, business, personal, etc.)",
-    "completeness": "complete|partial|exploratory"
+    "conversationLength": number,
+    "complexity": "simple" | "moderate" | "complex",
+    "domain": string,
+    "completeness": "complete" | "partial" | "exploratory"
   }
 }`;

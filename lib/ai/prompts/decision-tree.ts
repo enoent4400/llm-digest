@@ -7,24 +7,24 @@ Extract decision points, options, and outcomes from the conversation into a stru
 
 ## JSON SCHEMA (REQUIRED):
 {
-  "title": "Decision tree title",
+  "title": string,
   "rootDecision": {
-    "id": "root",
-    "question": "Main decision or question",
-    "description": "Context for this decision"
+    "id": string,
+    "question": string,
+    "description": string
   },
   "nodes": [
     {
-      "id": "node-id",
-      "type": "decision|outcome",
-      "question": "Decision question (for decision nodes)",
-      "result": "Final outcome (for outcome nodes)",
+      "id": string,
+      "type": "decision" | "outcome",
+      "question"?: string,
+      "result"?: string,
       "options": [
         {
-          "option": "Choice description",
-          "leadsTo": "next-node-id",
-          "pros": ["advantages"],
-          "cons": ["disadvantages"]
+          "option": string,
+          "leadsTo": string,
+          "pros": string[],
+          "cons": string[]
         }
       ]
     }

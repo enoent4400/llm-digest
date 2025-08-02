@@ -250,7 +250,7 @@ export function DashboardClient({ user, digests }: DashboardClientProps) {
                     <Icon icon={Code} size={24} strokeWidth={3} className="text-accent-primary" />
                   </div>
                   <p className="text-xs font-medium text-gray-200">
-                    Code Organization
+                    Code Blocks
                   </p>
                 </div>
 
@@ -414,13 +414,12 @@ export function DashboardClient({ user, digests }: DashboardClientProps) {
                         }
                       >
                         <Card
-                          className={`h-full flex flex-col transition-all duration-200 ${
-                            digest.status === 'completed'
+                          className={`h-full flex flex-col transition-all duration-200 ${digest.status === 'completed'
                               ? 'hover:border-accent-primary/50 cursor-pointer'
                               : digest.status === 'processing'
                                 ? 'animate-pulse opacity-75'
                                 : 'opacity-50'
-                          }`}
+                            }`}
                         >
                           <CardHeader>
                             <div className="flex items-start justify-between">
@@ -456,13 +455,12 @@ export function DashboardClient({ user, digests }: DashboardClientProps) {
 
                                   {/* Status Badge */}
                                   <span
-                                    className={`px-2 py-1 rounded-lg font-medium flex items-center gap-1 ${
-                                      digest.status === 'completed'
+                                    className={`px-2 py-1 rounded-lg font-medium flex items-center gap-1 ${digest.status === 'completed'
                                         ? 'bg-green-500 text-white'
                                         : digest.status === 'processing'
                                           ? 'bg-orange-500 text-white'
                                           : 'bg-red-500 text-white'
-                                    }`}
+                                      }`}
                                   >
                                     {digest.status === 'completed' ? (
                                       <Icon icon={Check} size={14} strokeWidth={2.5} className="text-white" />
@@ -476,10 +474,10 @@ export function DashboardClient({ user, digests }: DashboardClientProps) {
 
                                   {digest.processed_content?.metadata
                                     ?.domain && (
-                                    <span className="px-2 py-1 bg-gray-800 text-gray-200 rounded-lg">
-                                      {digest.processed_content.metadata.domain}
-                                    </span>
-                                  )}
+                                      <span className="px-2 py-1 bg-gray-800 text-gray-200 rounded-lg">
+                                        {digest.processed_content.metadata.domain}
+                                      </span>
+                                    )}
                                 </div>
                               </div>
 
@@ -487,14 +485,14 @@ export function DashboardClient({ user, digests }: DashboardClientProps) {
 
                             {/* Stats */}
                             <div className="flex items-center justify-between text-xs text-gray-500 mt-auto pt-3">
-                                <span>
-                                  {new Date(
-                                    digest.created
-                                  ).toLocaleDateString()}
-                                </span>
-                                <div className="flex items-center gap-2">
-                                  {digest.processed_content?.keyInsights
-                                    ?.length > 0 && (
+                              <span>
+                                {new Date(
+                                  digest.created
+                                ).toLocaleDateString()}
+                              </span>
+                              <div className="flex items-center gap-2">
+                                {digest.processed_content?.keyInsights
+                                  ?.length > 0 && (
                                     <span>
                                       {
                                         digest.processed_content.keyInsights
@@ -503,8 +501,8 @@ export function DashboardClient({ user, digests }: DashboardClientProps) {
                                       insights
                                     </span>
                                   )}
-                                  {digest.processed_content?.practicalTakeaways
-                                    ?.length > 0 && (
+                                {digest.processed_content?.practicalTakeaways
+                                  ?.length > 0 && (
                                     <span>
                                       {
                                         digest.processed_content
@@ -513,7 +511,7 @@ export function DashboardClient({ user, digests }: DashboardClientProps) {
                                       actions
                                     </span>
                                   )}
-                                </div>
+                              </div>
                             </div>
                           </CardContent>
                         </Card>

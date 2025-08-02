@@ -7,17 +7,17 @@ Extract questions and answers from the conversation and organize them into a com
 
 ## JSON SCHEMA (REQUIRED):
 {
-  "title": "FAQ title based on conversation topic",
-  "description": "Brief overview of what this FAQ covers",
+  "title": string,
+  "description": string,
   "categories": [
     {
-      "category": "Category name",
+      "category": string,
       "questions": [
         {
-          "question": "The actual question asked",
-          "answer": "Comprehensive answer provided",
-          "tags": ["relevant", "topic", "tags"],
-          "difficulty": "beginner|intermediate|advanced"
+          "question": string,
+          "answer": string,
+          "tags": string[],
+          "difficulty": "beginner" | "intermediate" | "advanced"
         }
       ]
     }

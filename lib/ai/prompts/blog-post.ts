@@ -7,18 +7,18 @@ Transform the conversation into a well-structured blog post with engaging conten
 
 ## JSON SCHEMA (REQUIRED):
 {
-  "title": "Engaging blog post title",
-  "subtitle": "Optional subtitle or tagline",
-  "introduction": "Hook and overview paragraph",
+  "title": string,
+  "subtitle"?: string,
+  "introduction": string,
   "sections": [
     {
-      "heading": "Section heading",
-      "content": "Section content in markdown format",
-      "type": "introduction|main-content|example|conclusion"
+      "heading": string,
+      "content": string,  // markdown format
+      "type": "introduction" | "main-content" | "example" | "conclusion"
     }
   ],
-  "keyTakeaways": ["Main points readers should remember"],
-  "tags": ["relevant", "blog", "tags"],
-  "targetAudience": "Who this post is written for",
-  "readingTime": "estimated-reading-time-minutes"
+  "keyTakeaways": string[],
+  "tags": string[],
+  "targetAudience": string,
+  "readingTime": number  // minutes
 }`;

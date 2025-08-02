@@ -9,40 +9,40 @@ Extract all code blocks from the conversation. Focus on making code copy-paste r
 
 ## JSON SCHEMA (REQUIRED):
 {
-  "title": "Code from Chat",
-  "hasCodeBlocks": true,
-  "summary": "Brief description of the code discussed",
+  "title": string,
+  "hasCodeBlocks": boolean,
+  "summary": string,
   "blocks": [
     {
-      "id": "unique-block-id",
-      "filename": "suggested-filename.ext",
-      "language": "javascript|python|typescript|html|css|sql|bash|json|yaml|go|rust|java|cpp|csharp|php|ruby|swift|kotlin|other",
-      "code": "// Clean, properly formatted code\\nfunction example() {\\n  return 'ready to copy';\\n}",
-      "description": "Brief explanation of what this code does",
-      "messageIndex": "conversation-message-number-where-code-appeared",
-      "blockIndex": "index-of-this-block-within-that-message"
+      "id": string,
+      "filename": string,
+      "language": "javascript" | "python" | "typescript" | "html" | "css" | "sql" | "bash" | "json" | "yaml" | "go" | "rust" | "java" | "cpp" | "csharp" | "php" | "ruby" | "swift" | "kotlin" | "other",
+      "code": string,
+      "description": string,
+      "messageIndex": number,
+      "blockIndex": number
     }
   ],
   "metadata": {
-    "totalBlocks": "total-number-of-code-blocks",
-    "languages": ["list", "of", "unique", "languages", "found"],
-    "conversationLength": "total-messages-in-conversation",
-    "complexity": "simple|moderate|complex",
-    "domain": "web|backend|mobile|data|devops|other",
-    "completeness": "complete|partial|mixed"
+    "totalBlocks": number,
+    "languages": string[],
+    "conversationLength": number,
+    "complexity": "simple" | "moderate" | "complex",
+    "domain": "web" | "backend" | "mobile" | "data" | "devops" | "other",
+    "completeness": "complete" | "partial" | "mixed"
   }
 }
 
 ## ALTERNATE SCHEMA FOR NO CODE:
 {
-  "title": "No code blocks found",
+  "title": string,
   "hasCodeBlocks": false,
-  "summary": "This conversation did not contain any code blocks",
+  "summary": string,
   "blocks": [],
   "metadata": {
     "totalBlocks": 0,
     "languages": [],
-    "conversationLength": "total-messages",
+    "conversationLength": number,
     "complexity": "simple",
     "domain": "discussion",
     "completeness": "n/a"
