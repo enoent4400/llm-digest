@@ -190,7 +190,7 @@ export interface MindMapContent {
   nodes: MindMapNode[];
   edges: MindMapEdge[];
   layout: {
-    direction: 'TB' | 'BT' | 'LR' | 'RL';
+    direction: 'TB' | 'LR';
     spacing: number;
   };
   metadata: DigestMetadata;
