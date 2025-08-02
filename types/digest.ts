@@ -80,48 +80,40 @@ export interface ActionPlanPhase {
   priority: ImportanceLevel;
 }
 
-export interface ActionPlanAction {
+export interface Action {
   id: string;
-  action: string;
+  title: string;
   description: string;
   category: string;
   priority: ImportanceLevel;
   timeframe: TimeframeLevel;
   difficulty: DifficultyLevel;
   dependencies?: string[];
+  estimatedHours?: number;
   resources?: string[];
   successCriteria?: string;
 }
 
-export interface ActionPlanMilestone {
-  milestone: string;
+export interface Milestone {
+  id: string;
+  title: string;
   description: string;
   targetDate: string;
   criteria: string[];
 }
 
-export interface ActionPlanRisk {
-  risk: string;
+export interface Risk {
+  id: string;
+  title: string;
+  description: string;
   impact: ImportanceLevel;
   mitigation: string;
 }
 
-export interface ActionPlanResources {
+export interface ResourceCollection {
   tools: string[];
   skills: string[];
   materials: string[];
-}
-
-export interface ActionItem {
-  id: string;
-  title: string;
-  description: string;
-  priority: ImportanceLevel;
-  timeframe: TimeframeLevel;
-  difficulty: DifficultyLevel;
-  dependencies?: string[]; // References to other action item IDs
-  category: string;
-  estimatedHours?: number;
 }
 
 export interface ActionPlanContent {
@@ -129,16 +121,16 @@ export interface ActionPlanContent {
   objective: string;
   summary: string;
   phases: ActionPlanPhase[];
-  actions: ActionPlanAction[];
-  actionItems: ActionItem[];
-  milestones: ActionPlanMilestone[];
-  risks: ActionPlanRisk[];
-  resources: ActionPlanResources;
+  actions: Action[];
+  actionItems: Action[];
+  milestones: Milestone[];
+  risks: Risk[];
+  resources: ResourceCollection;
   categories: string[];
   timeline: {
-    immediate: ActionItem[];
-    shortTerm: ActionItem[];
-    longTerm: ActionItem[];
+    immediate: Action[];
+    shortTerm: Action[];
+    longTerm: Action[];
   };
   metadata: DigestMetadata;
 }

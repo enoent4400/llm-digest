@@ -3,12 +3,12 @@
 // REVIEW CHECKPOINT: Verify action plan processes digest data correctly
 
 import { describe, it, expect } from 'vitest';
-import type { ActionPlanContent, ActionItem, ImportanceLevel, TimeframeLevel, DifficultyLevel } from '@/types/digest';
+import type { ActionPlanContent, Action, ImportanceLevel, TimeframeLevel, DifficultyLevel } from '@/types/digest';
 
 // Utility function to format action plan data
 function formatActionPlan(digest: Partial<ActionPlanContent> | null | undefined): Partial<ActionPlanContent> {
   const safeDigest = digest || {};
-  const actionItems = (safeDigest.actionItems || []) as ActionItem[];
+  const actionItems = (safeDigest.actionItems || []) as Action[];
 
   return {
     title: safeDigest.title || 'Untitled Action Plan',
@@ -52,7 +52,7 @@ function generateActionPlanCopyableText(digest: Partial<ActionPlanContent>): str
 describe('Action Plan Formatting', () => {
   it('should format action plan data correctly', () => {
     // Arrange
-    const mockActionItems: ActionItem[] = [
+    const mockActionItems: Action[] = [
       {
         id: '1',
         title: 'Set up development environment',
@@ -81,7 +81,7 @@ describe('Action Plan Formatting', () => {
 
   it('should group action items by timeframe', () => {
     // Arrange
-    const mockActionItems: ActionItem[] = [
+    const mockActionItems: Action[] = [
       {
         id: '1',
         title: 'Research requirements',
@@ -145,7 +145,7 @@ describe('Action Plan Formatting', () => {
 
   it('should generate copyable text format with all action details', () => {
     // Arrange
-    const mockActionItems: ActionItem[] = [
+    const mockActionItems: Action[] = [
       {
         id: '1',
         title: 'Implement login feature',

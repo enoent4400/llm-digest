@@ -4,10 +4,10 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Icon } from '@/components/ui/icon';
 import { AlertTriangle, Clock, Target } from 'lucide-react';
-import type { ActionItem } from '@/types/digest';
+import type { Action } from '@/types/digest';
 
 interface ActionCardProps {
-  action: ActionItem;
+  action: Action;
   priorityColor: (priority: string) => string;
   timeframeColor: (timeframe: string) => string;
 }

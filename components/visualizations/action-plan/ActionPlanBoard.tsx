@@ -7,7 +7,7 @@ import { Icon } from '@/components/ui/icon';
 import { Badge } from '@/components/ui/badge';
 import { Copy, Check, Calendar, Clock, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
-import type { ActionPlanContent, ActionItem } from '@/types/digest';
+import type { ActionPlanContent, Action } from '@/types/digest';
 import type { DigestRecord } from '@/types/database';
 import { PhaseColumn } from './components/PhaseColumn';
 import { EmptyState } from '../shared/EmptyState';
@@ -22,9 +22,9 @@ interface ActionPlanBoardProps {
 function parseDatabaseDigest(dbDigest: DigestRecord): ActionPlanContent {
   const content = dbDigest.processed_content || {};
 
-  // Convert action plan actions to the legacy ActionItem format for timeline grouping
+  // Convert action plan actions to the unified Action format for timeline grouping
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const legacyActionItems: ActionItem[] = (content.actions || content.actionItems || []).map((action: any) => ({
+  const legacyActionItems: Action[] = (content.actions || content.actionItems || []).map((action: any) => ({
     id: action.id || Math.random().toString(36).substr(2, 9),
     title: action.action || action.title || 'Untitled Action',
     description: action.description || '',
@@ -65,10 +65,10 @@ function parseDatabaseDigest(dbDigest: DigestRecord): ActionPlanContent {
 }
 
 // Helper function to group actions by timeframe
-function groupActionsByTimeframe(actions: ActionItem[]): ActionPlanContent['timeline'] {
-  const immediate: ActionItem[] = [];
-  const shortTerm: ActionItem[] = [];
-  const longTerm: ActionItem[] = [];
+function groupActionsByTimeframe(actions: Action[]): ActionPlanContent['timeline'] {
+  const immediate: Action[] = [];
+  const shortTerm: Action[] = [];
+  const longTerm: Action[] = [];
 
   actions.forEach(action => {
     switch (action.timeframe) {

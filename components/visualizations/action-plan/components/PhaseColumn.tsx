@@ -4,12 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Icon } from '@/components/ui/icon';
 import { AlertCircle } from 'lucide-react';
-import type { ActionItem } from '@/types/digest';
+import type { Action } from '@/types/digest';
 import { ActionCard } from './ActionCard';
 
 interface PhaseColumnProps {
   title: string;
-  actions: ActionItem[];
+  actions: Action[];
   priorityColor: (priority: string) => string;
   timeframeColor: (timeframe: string) => string;
 }
