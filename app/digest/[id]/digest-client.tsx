@@ -15,6 +15,7 @@ import { Icon } from '@/components/ui/icon';
 import { Settings, FileText, RotateCcw, Trash2, BarChart3, Construction } from 'lucide-react';
 import { ExecutiveSummary } from '@/components/visualizations/executive-summary';
 import { SimpleCodeBlocksDigest } from '@/components/visualizations/code-blocks/SimpleCodeBlocksDigest';
+import { ActionPlanBoard } from '@/components/visualizations/action-plan';
 import Link from 'next/link';
 import { useState } from 'react';
 import type { KeyInsight, PracticalTakeaway, ShareableQuote } from '@/types/digest';
@@ -76,7 +77,7 @@ function downloadFile(content: string, filename: string, mimeType: string) {
 }
 
 export default function DigestPage({ initialDigest }: DigestPageProps) {
-  const [digest, ] = useState<DigestRecord>(initialDigest);
+  const [digest,] = useState<DigestRecord>(initialDigest);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [regenerateModalOpen, setRegenerateModalOpen] = useState(false);
 
@@ -217,8 +218,15 @@ export default function DigestPage({ initialDigest }: DigestPageProps) {
           />
         )}
 
+        {digest.format === 'action-plan' && digest.processed_content && (
+          <ActionPlanBoard
+            databaseDigest={digest}
+            showMetadata={true}
+          />
+        )}
+
         {/* Future: Add other visualization types */}
-        {!['executive-summary', 'code-organization'].includes(digest.format) && (
+        {!['executive-summary', 'code-organization', 'action-plan'].includes(digest.format) && (
           <Card>
             <CardContent className="text-center py-12">
               <div className="w-24 h-24 bg-gray-800 border border-gray-700 mx-auto mb-4 flex items-center justify-center rounded-lg">

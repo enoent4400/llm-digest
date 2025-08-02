@@ -73,6 +73,45 @@ export interface ExecutiveSummaryContent {
 
 // === Action Plan Digest Structure ===
 
+export interface ActionPlanPhase {
+  phase: string;
+  description: string;
+  duration: string;
+  priority: ImportanceLevel;
+}
+
+export interface ActionPlanAction {
+  id: string;
+  action: string;
+  description: string;
+  category: string;
+  priority: ImportanceLevel;
+  timeframe: TimeframeLevel;
+  difficulty: DifficultyLevel;
+  dependencies?: string[];
+  resources?: string[];
+  successCriteria?: string;
+}
+
+export interface ActionPlanMilestone {
+  milestone: string;
+  description: string;
+  targetDate: string;
+  criteria: string[];
+}
+
+export interface ActionPlanRisk {
+  risk: string;
+  impact: ImportanceLevel;
+  mitigation: string;
+}
+
+export interface ActionPlanResources {
+  tools: string[];
+  skills: string[];
+  materials: string[];
+}
+
 export interface ActionItem {
   id: string;
   title: string;
@@ -87,8 +126,14 @@ export interface ActionItem {
 
 export interface ActionPlanContent {
   title: string;
+  objective: string;
   summary: string;
+  phases: ActionPlanPhase[];
+  actions: ActionPlanAction[];
   actionItems: ActionItem[];
+  milestones: ActionPlanMilestone[];
+  risks: ActionPlanRisk[];
+  resources: ActionPlanResources;
   categories: string[];
   timeline: {
     immediate: ActionItem[];
@@ -372,6 +417,7 @@ export function isActionPlan(content: DigestContent): content is ActionPlanConte
 }
 
 export function isFAQ(content: DigestContent): content is FAQContent {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return 'questions' in content && Array.isArray((content as any).questions);
 }
 
@@ -388,6 +434,7 @@ export function isCodeOrganization(content: DigestContent): content is CodeOrgan
 }
 
 export function isCodeBlocks(content: DigestContent): content is CodeBlocksContent {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return 'languages' in content && Array.isArray((content as any).languages);
 }
 

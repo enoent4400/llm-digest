@@ -130,49 +130,50 @@ async function extractGeminiMessages(): Promise<ConversationMessage[]> {
         const firstLine = codeElement.textContent?.trim().split('\n')[0] || '';
         if (firstLine.startsWith('#')) {
           // More precise file extension matching to avoid substring matches
-          if (/\.(py|pyw|py3)$/.test(firstLine)) {
+          // Only match if the comment contains a clear file reference pattern
+          if (/\s+\.(py|pyw|py3)(\s+|$)/.test(firstLine)) {
             language = 'python';
-          } else if (/\.(js|ts|jsx|tsx)$/.test(firstLine)) {
+          } else if (/\s+\.(js|ts|jsx|tsx)(\s+|$)/.test(firstLine)) {
             language = 'javascript';
-          } else if (/\.(java)$/.test(firstLine)) {
+          } else if (/\s+\.(java)(\s+|$)/.test(firstLine)) {
             language = 'java';
-          } else if (/\.(cpp|c\+\+|cc|cxx)$/.test(firstLine)) {
+          } else if (/\s+\.(cpp|c\+\+|cc|cxx)(\s+|$)/.test(firstLine)) {
             language = 'cpp';
-          } else if (/\.(c|h)$/.test(firstLine)) {
+          } else if (/\s+\.(c|h)(\s+|$)/.test(firstLine)) {
             language = 'c';
-          } else if (/\.(go)$/.test(firstLine)) {
+          } else if (/\s+\.(go)(\s+|$)/.test(firstLine)) {
             language = 'go';
-          } else if (/\.(rs)$/.test(firstLine)) {
+          } else if (/\s+\.(rs)(\s+|$)/.test(firstLine)) {
             language = 'rust';
-          } else if (/\.(rb)$/.test(firstLine)) {
+          } else if (/\s+\.(rb)(\s+|$)/.test(firstLine)) {
             language = 'ruby';
-          } else if (/\.(php)$/.test(firstLine)) {
+          } else if (/\s+\.(php)(\s+|$)/.test(firstLine)) {
             language = 'php';
-          } else if (/\.(swift)$/.test(firstLine)) {
+          } else if (/\s+\.(swift)(\s+|$)/.test(firstLine)) {
             language = 'swift';
-          } else if (/\.(kt|kts)$/.test(firstLine)) {
+          } else if (/\s+\.(kt|kts)(\s+|$)/.test(firstLine)) {
             language = 'kotlin';
-          } else if (/\.(scala)$/.test(firstLine)) {
+          } else if (/\s+\.(scala)(\s+|$)/.test(firstLine)) {
             language = 'scala';
-          } else if (/\.(r)$/.test(firstLine)) {
+          } else if (/\s+\.(r)(\s+|$)/.test(firstLine)) {
             language = 'r';
-          } else if (/\.(m)$/.test(firstLine)) {
+          } else if (/\s+\.(m)(\s+|$)/.test(firstLine)) {
             language = 'matlab';
-          } else if (/\.(sh|bash)$/.test(firstLine)) {
+          } else if (/\s+\.(sh|bash)(\s+|$)/.test(firstLine)) {
             language = 'bash';
-          } else if (/\.(sql)$/.test(firstLine)) {
+          } else if (/\s+\.(sql)(\s+|$)/.test(firstLine)) {
             language = 'sql';
-          } else if (/\.(html|htm)$/.test(firstLine)) {
+          } else if (/\s+\.(html|htm)(\s+|$)/.test(firstLine)) {
             language = 'html';
-          } else if (/\.(css)$/.test(firstLine)) {
+          } else if (/\s+\.(css)(\s+|$)/.test(firstLine)) {
             language = 'css';
-          } else if (/\.(xml)$/.test(firstLine)) {
+          } else if (/\s+\.(xml)(\s+|$)/.test(firstLine)) {
             language = 'xml';
-          } else if (/\.(json)$/.test(firstLine)) {
+          } else if (/\s+\.(json)(\s+|$)/.test(firstLine)) {
             language = 'json';
-          } else if (/\.(yaml|yml)$/.test(firstLine)) {
+          } else if (/\s+\.(yaml|yml)(\s+|$)/.test(firstLine)) {
             language = 'yaml';
-          } else if (/\.(md|markdown)$/.test(firstLine)) {
+          } else if (/\s+\.(md|markdown)(\s+|$)/.test(firstLine)) {
             language = 'markdown';
           }
         }
