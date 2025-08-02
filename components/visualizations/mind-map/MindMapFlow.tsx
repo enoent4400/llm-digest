@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useLayoutEffect } from 'react';
+import React, { useCallback, useLayoutEffect, useState } from 'react';
 import {
   ReactFlow,
   Node,
@@ -12,16 +12,15 @@ import {
   MiniMap,
   BackgroundVariant,
   ConnectionMode,
-  Panel,
-  NodeProps,
-  Handle,
-  Position,
+  useReactFlow,
+  ReactFlowProvider,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import dagre from 'dagre';
-import { Download } from 'lucide-react';
-import { Button } from '../../ui/button';
-import { MindMapContent, MindMapNode } from '../../../types/digest';
+import { toPng } from 'html-to-image';
+import MindMapNode from './components/MindMapNode';
+import MindMapControls from './components/MindMapControls';
+import { MindMapContent } from '../../../types/digest';
 import { EmptyState } from '../shared/EmptyState';
 import type { DigestRecord } from '../../../types/database';
 
@@ -30,83 +29,11 @@ interface MindMapNodeData extends Record<string, unknown> {
   description?: string;
   type: string;
   importance?: string;
+  isCollapsed?: boolean;
 }
 
-// Custom node component
-const MindMapNodeComponent: React.FC<NodeProps> = ({ data, isConnectable }) => {
-  const nodeData = data as unknown as MindMapNodeData;
-
-  const getNodeStyle = () => {
-    const baseStyle = {
-      padding: '12px 20px',
-      borderRadius: '8px',
-      border: '2px solid',
-      fontSize: '14px',
-      fontWeight: 500,
-      transition: 'all 0.2s',
-      cursor: 'pointer',
-    };
-
-    switch (nodeData.type) {
-      case 'root':
-        return {
-          ...baseStyle,
-          backgroundColor: '#6366f1',
-          borderColor: '#4f46e5',
-          color: 'white',
-          fontSize: '16px',
-          fontWeight: 600,
-        };
-      case 'topic':
-        return {
-          ...baseStyle,
-          backgroundColor: '#8b5cf6',
-          borderColor: '#7c3aed',
-          color: 'white',
-        };
-      case 'subtopic':
-        return {
-          ...baseStyle,
-          backgroundColor: '#ec4899',
-          borderColor: '#db2777',
-          color: 'white',
-        };
-      case 'detail':
-        return {
-          ...baseStyle,
-          backgroundColor: '#f3f4f6',
-          borderColor: '#d1d5db',
-          color: '#374151',
-        };
-      default:
-        return baseStyle;
-    }
-  };
-
-  return (
-    <div style={getNodeStyle()} className="hover:shadow-lg">
-      <Handle
-        type="target"
-        position={Position.Top}
-        isConnectable={isConnectable}
-        style={{ background: '#555' }}
-      />
-      <div>{nodeData.label}</div>
-      {nodeData.description && (
-        <div className="text-xs mt-1 opacity-80">{nodeData.description}</div>
-      )}
-      <Handle
-        type="source"
-        position={Position.Bottom}
-        isConnectable={isConnectable}
-        style={{ background: '#555' }}
-      />
-    </div>
-  );
-};
-
 const nodeTypes = {
-  mindMapNode: MindMapNodeComponent,
+  mindMapNode: MindMapNode,
 };
 
 const getLayoutedElements = (
@@ -147,9 +74,11 @@ interface MindMapFlowProps {
   databaseDigest: DigestRecord;
 }
 
-const MindMapFlow: React.FC<MindMapFlowProps> = ({ databaseDigest }) => {
+const MindMapFlowInner: React.FC<MindMapFlowProps> = ({ databaseDigest }) => {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const reactFlowInstance = useReactFlow();
 
   const onLayout = useCallback(
     (direction: 'TB' | 'BT' | 'LR' | 'RL') => {
@@ -165,6 +94,36 @@ const MindMapFlow: React.FC<MindMapFlowProps> = ({ databaseDigest }) => {
     [nodes, edges, setNodes, setEdges]
   );
 
+  const handleExport = async () => {
+    if (reactFlowInstance) {
+      const flowElement = document.querySelector('.react-flow') as HTMLElement | null;
+      if (flowElement) {
+        try {
+          const dataUrl = await toPng(flowElement, {
+            backgroundColor: '#f7f9fb',
+            width: flowElement.scrollWidth,
+            height: flowElement.scrollHeight,
+          });
+
+          const link = document.createElement('a');
+          link.download = 'mind-map.png';
+          link.href = dataUrl;
+          link.click();
+        } catch (error) {
+          console.error('Error exporting mind map:', error);
+        }
+      }
+    }
+  };
+
+  const handleReset = () => {
+    onLayout(databaseDigest.processed_content?.layout?.direction || 'TB');
+  };
+
+  const handleToggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen);
+  };
+
   useLayoutEffect(() => {
     if (!databaseDigest?.processed_content) return;
 
@@ -172,7 +131,9 @@ const MindMapFlow: React.FC<MindMapFlowProps> = ({ databaseDigest }) => {
     if (!content.nodes || !content.edges) return;
 
     // Transform MindMapNode to ReactFlow Node
-    const flowNodes: Node<MindMapNodeData>[] = content.nodes.map((node: MindMapNode) => ({
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const flowNodes: Node<MindMapNodeData>[] = content.nodes.map((node: any) => ({
       id: node.id,
       type: 'mindMapNode',
       position: node.data.position || { x: 0, y: 0 },
@@ -181,6 +142,7 @@ const MindMapFlow: React.FC<MindMapFlowProps> = ({ databaseDigest }) => {
         description: node.data.description,
         type: node.type,
         importance: node.data.importance,
+        isCollapsed: node.data.isCollapsed || false,
       },
     }));
 
@@ -207,11 +169,6 @@ const MindMapFlow: React.FC<MindMapFlowProps> = ({ databaseDigest }) => {
     setEdges(layoutedEdges);
   }, [databaseDigest, setNodes, setEdges]);
 
-  const handleExport = () => {
-    // TODO: Implement export functionality
-    console.log('Export mind map');
-  };
-
   if (!databaseDigest?.processed_content) {
     return <EmptyState title="No Data" message="No mind map data available" />;
   }
@@ -219,7 +176,7 @@ const MindMapFlow: React.FC<MindMapFlowProps> = ({ databaseDigest }) => {
   const content = databaseDigest.processed_content as MindMapContent;
 
   return (
-    <div className="w-full h-[600px] border rounded-lg overflow-hidden bg-gray-50">
+    <div className={`w-full ${isFullscreen ? 'h-screen fixed top-0 left-0 right-0 bottom-0 z-50' : 'h-[600px]'} border rounded-lg overflow-hidden bg-gray-50`}>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -231,34 +188,14 @@ const MindMapFlow: React.FC<MindMapFlowProps> = ({ databaseDigest }) => {
         fitViewOptions={{ padding: 0.2 }}
       >
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
-        <Controls>
-          <button
-            onClick={() => onLayout('TB')}
-            title="Top to Bottom"
-            className="react-flow__controls-button"
-          >
-            TB
-          </button>
-          <button
-            onClick={() => onLayout('LR')}
-            title="Left to Right"
-            className="react-flow__controls-button"
-          >
-            LR
-          </button>
-        </Controls>
+        <Controls />
         <MiniMap />
-        <Panel position="top-right" className="flex gap-2">
-          <Button
-            size="sm"
-            variant="secondary"
-            onClick={handleExport}
-            className="bg-white"
-          >
-            <Download className="w-4 h-4 mr-1" />
-            Export
-          </Button>
-        </Panel>
+        <MindMapControls
+          onExport={handleExport}
+          onReset={handleReset}
+          onToggleFullscreen={handleToggleFullscreen}
+          isFullscreen={isFullscreen}
+        />
       </ReactFlow>
       {content.summary && (
         <div className="p-4 bg-white border-t">
@@ -267,6 +204,14 @@ const MindMapFlow: React.FC<MindMapFlowProps> = ({ databaseDigest }) => {
         </div>
       )}
     </div>
+  );
+};
+
+const MindMapFlow: React.FC<MindMapFlowProps> = ({ databaseDigest }) => {
+  return (
+    <ReactFlowProvider>
+      <MindMapFlowInner databaseDigest={databaseDigest} />
+    </ReactFlowProvider>
   );
 };
 
