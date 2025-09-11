@@ -5,10 +5,7 @@ import { EXECUTIVE_SUMMARY_PROMPT } from './executive-summary';
 import { ACTION_PLAN_PROMPT } from './action-plan';
 import { FAQ_PROMPT } from './faq';
 import { MIND_MAP_PROMPT } from './mind-map';
-import { KNOWLEDGE_GRAPH_PROMPT } from './knowledge-graph';
 import { CODE_ORGANIZATION_PROMPT } from './code-organization';
-import { GANTT_CHART_PROMPT } from './gantt-chart';
-import { DECISION_TREE_PROMPT } from './decision-tree';
 import { BLOG_POST_PROMPT } from './blog-post';
 
 // Format-specific prompts with deterministic JSON schemas
@@ -17,10 +14,7 @@ export const DIGEST_FORMAT_PROMPTS = {
   'action-plan': ACTION_PLAN_PROMPT,
   'faq': FAQ_PROMPT,
   'mind-map': MIND_MAP_PROMPT,
-  'knowledge-graph': KNOWLEDGE_GRAPH_PROMPT,
   'code-organization': CODE_ORGANIZATION_PROMPT,
-  'gantt-chart': GANTT_CHART_PROMPT,
-  'decision-tree': DECISION_TREE_PROMPT,
   'blog-post': BLOG_POST_PROMPT
 };
 

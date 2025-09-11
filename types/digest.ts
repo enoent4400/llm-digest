@@ -196,44 +196,6 @@ export interface MindMapContent {
   metadata: DigestMetadata;
 }
 
-// === Knowledge Graph Digest Structure ===
-
-export interface KnowledgeGraphNode {
-  id: string;
-  label: string;
-  type: 'concept' | 'entity' | 'relationship' | 'insight';
-  data: {
-    description?: string;
-    importance?: ImportanceLevel;
-    category?: string;
-    position?: { x: number; y: number };
-  };
-}
-
-export interface KnowledgeGraphEdge {
-  id: string;
-  source: string;
-  target: string;
-  type: 'relates-to' | 'leads-to' | 'depends-on' | 'contradicts';
-  data: {
-    strength: number;
-    label?: string;
-  };
-}
-
-export interface KnowledgeGraphContent {
-  title: string;
-  summary: string;
-  nodes: KnowledgeGraphNode[];
-  edges: KnowledgeGraphEdge[];
-  clusters: {
-    id: string;
-    label: string;
-    nodeIds: string[];
-    color?: string;
-  }[];
-  metadata: DigestMetadata;
-}
 
 // === Code Organization Digest Structure ===
 
@@ -283,71 +245,6 @@ export interface CodeBlocksContent {
   };
 }
 
-// === Gantt Chart Digest Structure ===
-
-export interface GanttTask {
-  id: string;
-  title: string;
-  description: string;
-  startDate: string;
-  endDate: string;
-  type: 'milestone' | 'task' | 'phase' | 'dependency';
-  importance: ImportanceLevel;
-  progress: number; // 0-100
-  dependencies?: string[];
-  assignee?: string;
-  category?: string;
-}
-
-export interface GanttChartContent {
-  title: string;
-  summary: string;
-  tasks: GanttTask[];
-  phases: {
-    id: string;
-    title: string;
-    description: string;
-    taskIds: string[];
-    startDate: string;
-    endDate: string;
-  }[];
-  timeline: {
-    startDate: string;
-    endDate: string;
-    duration: string;
-  };
-  metadata: DigestMetadata;
-}
-
-// === Decision Tree Digest Structure ===
-
-export interface DecisionNode {
-  id: string;
-  type: 'question' | 'decision' | 'outcome' | 'action';
-  content: string;
-  parentId?: string;
-  children: string[];
-  data: {
-    condition?: string;
-    confidence?: ConfidenceLevel;
-    impact?: ImportanceLevel;
-  };
-}
-
-export interface DecisionTreeContent {
-  title: string;
-  summary: string;
-  rootNodeId: string;
-  nodes: DecisionNode[];
-  paths: {
-    id: string;
-    description: string;
-    nodeIds: string[];
-    outcome: string;
-  }[];
-  metadata: DigestMetadata;
-}
-
 // === Blog Post Digest Structure ===
 
 export interface BlogSection {
@@ -392,11 +289,8 @@ export type DigestContent =
   | ActionPlanContent
   | FAQContent
   | MindMapContent
-  | KnowledgeGraphContent
   | CodeOrganizationContent
   | CodeBlocksContent
-  | GanttChartContent
-  | DecisionTreeContent
   | BlogPostContent;
 
 // Type guards for digest content
@@ -417,10 +311,6 @@ export function isMindMap(content: DigestContent): content is MindMapContent {
   return 'nodes' in content && 'edges' in content && 'layout' in content;
 }
 
-export function isKnowledgeGraph(content: DigestContent): content is KnowledgeGraphContent {
-  return 'nodes' in content && 'edges' in content && 'clusters' in content;
-}
-
 export function isCodeOrganization(content: DigestContent): content is CodeOrganizationContent {
   return 'sections' in content && 'architecture' in content;
 }
@@ -430,21 +320,13 @@ export function isCodeBlocks(content: DigestContent): content is CodeBlocksConte
   return 'languages' in content && Array.isArray((content as any).languages);
 }
 
-export function isGanttChart(content: DigestContent): content is GanttChartContent {
-  return 'tasks' in content && 'phases' in content && 'timeline' in content;
-}
-
-export function isDecisionTree(content: DigestContent): content is DecisionTreeContent {
-  return 'rootNodeId' in content && 'paths' in content;
-}
-
 export function isBlogPost(content: DigestContent): content is BlogPostContent {
   return 'sections' in content && 'seo' in content && 'images' in content;
 }
 
 // Processing options for different digest types
 export interface DigestProcessingOptions {
-  format: 'executive-summary' | 'action-plan' | 'faq' | 'mind-map' | 'knowledge-graph' | 'code-organization' | 'code-blocks' | 'gantt-chart' | 'decision-tree' | 'blog-post';
+  format: 'executive-summary' | 'action-plan' | 'faq' | 'mind-map' | 'code-organization' | 'code-blocks' | 'blog-post';
   complexity?: ComplexityLevel;
   maxLength?: number;
   includeMetadata?: boolean;

@@ -30,7 +30,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 import { Icon } from "@/components/ui/icon"
-import { PartyPopper, Rocket, BarChart3, ListTodo, MessageSquare, GitBranch, Network, Code, GanttChart, TreePine, FileText } from "lucide-react"
+import { PartyPopper, Rocket, BarChart3, ListTodo, MessageSquare, GitBranch, Code, FileText } from "lucide-react"
 import { getAvailableFormats } from "@/lib/ai/prompts"
 
 const formSchema = z.object({
@@ -39,7 +39,7 @@ const formSchema = z.object({
     .refine((url) => url.includes("claude.ai") || url.includes("chatgpt.com") || url.includes("gemini") || url.includes("copilot.microsoft.com") || url.includes("grok"), {
       message: "Please enter a valid AI chat share link",
     }),
-  format: z.enum(['executive-summary', 'action-plan', 'faq', 'mind-map', 'knowledge-graph', 'code-organization', 'gantt-chart', 'decision-tree', 'blog-post']),
+  format: z.enum(['executive-summary', 'action-plan', 'faq', 'mind-map', 'code-organization', 'blog-post']),
 })
 
 interface CreateDigestDialogProps {
@@ -92,10 +92,7 @@ export function CreateDigestDialog({ children }: CreateDigestDialogProps) {
     'action-plan': { label: 'Action Plan', icon: ListTodo, description: 'Structured steps and implementation guidance' },
     'faq': { label: 'FAQ', icon: MessageSquare, description: 'Questions and answers from the conversation' },
     'mind-map': { label: 'Mind Map', icon: GitBranch, description: 'Visual topic relationships and hierarchy' },
-    'knowledge-graph': { label: 'Knowledge Graph', icon: Network, description: 'Entities and their connections' },
     'code-organization': { label: 'Code Blocks', icon: Code, description: 'Extract and organize code snippets' },
-    'gantt-chart': { label: 'Gantt Chart', icon: GanttChart, description: 'Project timeline and dependencies' },
-    'decision-tree': { label: 'Decision Tree', icon: TreePine, description: 'Decision points and outcomes' },
     'blog-post': { label: 'Blog Post', icon: FileText, description: 'Well-structured article format' },
   } as const
 
@@ -127,8 +124,8 @@ export function CreateDigestDialog({ children }: CreateDigestDialogProps) {
       const digestResponse = await fetch('/api/digest/create-from-url', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          url: values.claudeUrl, 
+        body: JSON.stringify({
+          url: values.claudeUrl,
           options: { format: values.format }
         })
       })

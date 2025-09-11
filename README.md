@@ -1,6 +1,6 @@
 # LLM Digest
 
-Transform AI conversations into structured insights. Import chats from various AI platforms and visualize the information through different formats like mind maps, timelines, and knowledge graphs.
+Transform AI conversations into structured insights. Import chats from various AI platforms and visualize the information through different formats like mind maps, timelines.
 
 ## Features
 
@@ -12,11 +12,8 @@ Transform AI conversations into structured insights. Import chats from various A
 ### Planned Visualizations
 
 - [ ] Executive summaries for quick insights
-- [ ] Knowledge graphs for relationship mapping  
 - [ ] Code organization for technical conversations
 - [ ] Mind maps (React Flow implementation)
-- [ ] Timeline/Gantt charts for project planning
-- [ ] Decision trees for troubleshooting flows
 - [ ] Blog post generation from digests (with AI-generated images and SEO optimization)
 
 ## Quick Start

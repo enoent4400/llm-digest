@@ -32,10 +32,8 @@ import {
   MailX,
   Search,
   Trash2,
-  Network,
   Code,
   GitBranch,
-  Calendar,
   PenTool
 } from 'lucide-react'
 import Link from 'next/link'
@@ -236,14 +234,6 @@ export function DashboardClient({ user, digests }: DashboardClientProps) {
                   </p>
                 </div>
 
-                <div className="text-center">
-                  <div className="w-12 h-12 bg-accent-primary/10 border border-accent-primary/20 mx-auto mb-2 flex items-center justify-center rounded-lg">
-                    <Icon icon={Network} size={24} strokeWidth={3} className="text-accent-primary" />
-                  </div>
-                  <p className="text-xs font-medium text-gray-200">
-                    Knowledge Graph
-                  </p>
-                </div>
 
                 <div className="text-center">
                   <div className="w-12 h-12 bg-accent-primary/10 border border-accent-primary/20 mx-auto mb-2 flex items-center justify-center rounded-lg">
@@ -260,15 +250,6 @@ export function DashboardClient({ user, digests }: DashboardClientProps) {
                   </div>
                   <p className="text-xs font-medium text-gray-200">
                     Mind Map
-                  </p>
-                </div>
-
-                <div className="text-center">
-                  <div className="w-12 h-12 bg-accent-primary/10 border border-accent-primary/20 mx-auto mb-2 flex items-center justify-center rounded-lg">
-                    <Icon icon={Calendar} size={24} strokeWidth={3} className="text-accent-primary" />
-                  </div>
-                  <p className="text-xs font-medium text-gray-200">
-                    Timeline/Gantt
                   </p>
                 </div>
 
@@ -415,10 +396,10 @@ export function DashboardClient({ user, digests }: DashboardClientProps) {
                       >
                         <Card
                           className={`h-full flex flex-col transition-all duration-200 ${digest.status === 'completed'
-                              ? 'hover:border-accent-primary/50 cursor-pointer'
-                              : digest.status === 'processing'
-                                ? 'animate-pulse opacity-75'
-                                : 'opacity-50'
+                            ? 'hover:border-accent-primary/50 cursor-pointer'
+                            : digest.status === 'processing'
+                              ? 'animate-pulse opacity-75'
+                              : 'opacity-50'
                             }`}
                         >
                           <CardHeader>
@@ -456,10 +437,10 @@ export function DashboardClient({ user, digests }: DashboardClientProps) {
                                   {/* Status Badge */}
                                   <span
                                     className={`px-2 py-1 rounded-lg font-medium flex items-center gap-1 ${digest.status === 'completed'
-                                        ? 'bg-green-500 text-white'
-                                        : digest.status === 'processing'
-                                          ? 'bg-orange-500 text-white'
-                                          : 'bg-red-500 text-white'
+                                      ? 'bg-green-500 text-white'
+                                      : digest.status === 'processing'
+                                        ? 'bg-orange-500 text-white'
+                                        : 'bg-red-500 text-white'
                                       }`}
                                   >
                                     {digest.status === 'completed' ? (

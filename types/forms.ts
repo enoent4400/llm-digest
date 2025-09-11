@@ -33,7 +33,7 @@ export interface ProfileFormData {
 }
 
 export interface PreferencesFormData {
-  defaultFormat: 'executive-summary' | 'action-plan' | 'faq' | 'mind-map' | 'knowledge-graph' | 'code-organization' | 'gantt-chart' | 'decision-tree' | 'blog-post';
+  defaultFormat: 'executive-summary' | 'action-plan' | 'faq' | 'mind-map' | 'code-organization' | 'blog-post';
   notifications: {
     digestComplete: boolean;
     weeklyDigest: boolean;
@@ -106,7 +106,7 @@ export const profileSchema = z.object({
 });
 
 export const preferencesSchema = z.object({
-  defaultFormat: z.enum(['executive-summary', 'action-plan', 'faq', 'mind-map', 'knowledge-graph', 'code-organization', 'gantt-chart', 'decision-tree', 'blog-post']),
+  defaultFormat: z.enum(['executive-summary', 'action-plan', 'faq', 'mind-map', 'code-organization', 'blog-post']),
   notifications: z.object({
     digestComplete: z.boolean(),
     weeklyDigest: z.boolean(),
@@ -206,7 +206,7 @@ export interface FilterFormData {
   search: string;
   status: 'all' | 'completed' | 'processing' | 'pending' | 'failed';
   platform: 'all' | 'claude' | 'chatgpt' | 'gemini' | 'perplexity';
-  format: 'all' | 'executive-summary' | 'action-plan' | 'faq' | 'mind-map' | 'knowledge-graph' | 'code-organization' | 'gantt-chart' | 'decision-tree' | 'blog-post';
+  format: 'all' | 'executive-summary' | 'action-plan' | 'faq' | 'mind-map' | 'code-organization' | 'blog-post';
   dateFrom?: string;
   dateTo?: string;
   sortBy: 'newest' | 'oldest' | 'title' | 'cost';
@@ -217,7 +217,7 @@ export const filterFormSchema = z.object({
   search: z.string(),
   status: z.enum(['all', 'completed', 'processing', 'pending', 'failed']),
   platform: z.enum(['all', 'claude', 'chatgpt', 'gemini', 'perplexity']),
-  format: z.enum(['all', 'executive-summary', 'action-plan', 'faq', 'mind-map', 'knowledge-graph', 'code-organization', 'gantt-chart', 'decision-tree', 'blog-post']),
+  format: z.enum(['all', 'executive-summary', 'action-plan', 'faq', 'mind-map', 'code-organization', 'blog-post']),
   dateFrom: z.string().optional(),
   dateTo: z.string().optional(),
   sortBy: z.enum(['newest', 'oldest', 'title', 'cost']),

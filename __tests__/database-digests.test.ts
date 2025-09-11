@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { saveDigest, getDigestById, getUserDigests, updateDigest, getDigestByFingerprint, deleteDigest, type DigestData } from '@/lib/database/digests';
 import { Platform } from '@/lib/platform/types';
 
@@ -20,7 +20,7 @@ const mockDigestData: DigestData = {
 describe('Mock Database Operations', () => {
   it('should save a digest successfully', async () => {
     const result = await saveDigest(mockDigestData);
-    
+
     expect(result.error).toBeNull();
     expect(result.data).toBeDefined();
     expect(result.data?.id).toBeDefined();
@@ -32,10 +32,10 @@ describe('Mock Database Operations', () => {
     // First save a digest
     const saveResult = await saveDigest(mockDigestData);
     const digestId = saveResult.data!.id;
-    
+
     // Then retrieve it
     const getResult = await getDigestById(digestId);
-    
+
     expect(getResult.error).toBeNull();
     expect(getResult.data).toBeDefined();
     expect(getResult.data?.id).toBe(digestId);
@@ -44,7 +44,7 @@ describe('Mock Database Operations', () => {
 
   it('should return error for non-existent digest ID', async () => {
     const result = await getDigestById('non-existent-id');
-    
+
     expect(result.error).toBeDefined();
     expect(result.data).toBeNull();
     expect(result.error?.message).toBe('Digest not found');
@@ -55,10 +55,10 @@ describe('Mock Database Operations', () => {
     await saveDigest(mockDigestData);
     await saveDigest({ ...mockDigestData, title: 'Second Digest' });
     await saveDigest({ ...mockDigestData, title: 'Third Digest' });
-    
+
     // Retrieve user digests with limit
     const result = await getUserDigests(mockDigestData.user_id, 2);
-    
+
     expect(result.error).toBeNull();
     expect(result.data).toBeDefined();
     expect(result.data!.length).toBeLessThanOrEqual(2);
@@ -69,11 +69,11 @@ describe('Mock Database Operations', () => {
     // Save a digest first
     const saveResult = await saveDigest(mockDigestData);
     const digestId = saveResult.data!.id;
-    
+
     // Update the digest
     const updates = { title: 'Updated Title', estimated_cost: 0.05 };
     const updateResult = await updateDigest(digestId, updates);
-    
+
     expect(updateResult.error).toBeNull();
     expect(updateResult.data).toBeDefined();
     expect(updateResult.data?.title).toBe('Updated Title');
@@ -83,13 +83,13 @@ describe('Mock Database Operations', () => {
   it('should find digest by fingerprint and user ID', async () => {
     // Save a digest
     await saveDigest(mockDigestData);
-    
+
     // Find by fingerprint
     const result = await getDigestByFingerprint(
       mockDigestData.conversation_fingerprint,
       mockDigestData.user_id
     );
-    
+
     expect(result.error).toBeNull();
     expect(result.data).toBeDefined();
     expect(result.data?.conversation_fingerprint).toBe(mockDigestData.conversation_fingerprint);
@@ -100,14 +100,14 @@ describe('Mock Database Operations', () => {
     // Save a digest
     const saveResult = await saveDigest(mockDigestData);
     const digestId = saveResult.data!.id;
-    
+
     // Delete the digest
     const deleteResult = await deleteDigest(digestId, mockDigestData.user_id);
-    
+
     expect(deleteResult.error).toBeNull();
     expect(deleteResult.data).toBeDefined();
     expect(deleteResult.data?.id).toBe(digestId);
-    
+
     // Verify it's deleted
     const getResult = await getDigestById(digestId);
     expect(getResult.error).toBeDefined();
@@ -118,10 +118,10 @@ describe('Mock Database Operations', () => {
     // Save a digest
     const saveResult = await saveDigest(mockDigestData);
     const digestId = saveResult.data!.id;
-    
+
     // Try to delete with wrong user ID
     const deleteResult = await deleteDigest(digestId, 'wrong-user-id');
-    
+
     expect(deleteResult.error).toBeDefined();
     expect(deleteResult.data).toBeNull();
     expect(deleteResult.error?.message).toBe('Unauthorized');
@@ -130,18 +130,15 @@ describe('Mock Database Operations', () => {
 
 describe('Data Validation', () => {
   it('should handle all required digest format types', async () => {
-    const formats: Array<'executive-summary' | 'action-plan' | 'faq' | 'mind-map' | 'knowledge-graph' | 'code-organization' | 'gantt-chart' | 'decision-tree' | 'blog-post'> = [
+    const formats: Array<'executive-summary' | 'action-plan' | 'faq' | 'mind-map' | 'code-organization' | 'blog-post'> = [
       'executive-summary',
-      'action-plan', 
+      'action-plan',
       'faq',
       'mind-map',
-      'knowledge-graph',
       'code-organization',
-      'gantt-chart',
-      'decision-tree',
       'blog-post'
     ];
-    
+
     for (const format of formats) {
       const result = await saveDigest({ ...mockDigestData, format });
       expect(result.error).toBeNull();
@@ -155,7 +152,7 @@ describe('Data Validation', () => {
       Platform.CHATGPT,
       Platform.GEMINI
     ];
-    
+
     for (const platform of platforms) {
       const result = await saveDigest({ ...mockDigestData, source_platform: platform });
       expect(result.error).toBeNull();
@@ -178,7 +175,7 @@ describe('Data Validation', () => {
       estimated_cost: 0,
       model_used: ''
     };
-    
+
     const result = await saveDigest(minimalData);
     expect(result.error).toBeNull();
     expect(result.data).toBeDefined();

@@ -239,7 +239,6 @@ export default function DigestPage({ initialDigest }: DigestPageProps) {
             databaseDigest={digest}
           />
         )}
-
         {/* Future: Add other visualization types */}
         {!['executive-summary', 'code-organization', 'action-plan', 'faq', 'mind-map'].includes(digest.format) && (
           <Card>

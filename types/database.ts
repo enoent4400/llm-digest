@@ -1,5 +1,5 @@
 export type SourcePlatform = 'claude' | 'chatgpt' | 'gemini' | 'perplexity' | 'copilot' | 'grok';
-export type DigestFormat = 'executive-summary' | 'action-plan' | 'faq' | 'mind-map' | 'knowledge-graph' | 'code-organization' | 'gantt-chart' | 'decision-tree' | 'blog-post';
+export type DigestFormat = 'executive-summary' | 'action-plan' | 'faq' | 'mind-map' | 'code-organization' | 'blog-post';
 
 // Core digest database entity
 export interface DigestData {
@@ -80,7 +80,6 @@ export interface DatabaseListResult<T> {
 }
 
 // Specific database operation types
-export interface SaveDigestParams extends DigestData { }
 
 export interface UpdateDigestParams {
   title?: string;

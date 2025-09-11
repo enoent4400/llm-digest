@@ -27,7 +27,7 @@ export interface ApiError {
 export interface CreateDigestRequest {
   conversation: ClaudeConversation;
   options?: {
-    visualizationType?: 'executive-summary' | 'knowledge-graph' | 'code-organization' | 'mind-map' | 'gantt-chart' | 'decision-tree' | 'blog-post';
+    visualizationType?: 'executive-summary' | 'code-organization' | 'mind-map' | 'faq' | 'action-plan' | 'blog-post';
     regenerate?: boolean;
     existingDigestId?: string;
   };

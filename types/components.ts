@@ -90,7 +90,7 @@ export interface DigestFiltersState {
   statusFilter: 'all' | 'completed' | 'processing' | 'pending' | 'failed';
   sortBy: 'newest' | 'oldest' | 'title';
   platformFilter?: 'all' | 'claude' | 'chatgpt' | 'gemini' | 'perplexity';
-  formatFilter?: 'all' | 'executive-summary' | 'action-plan' | 'faq' | 'mind-map' | 'knowledge-graph' | 'code-organization' | 'gantt-chart' | 'decision-tree' | 'blog-post';
+  formatFilter?: 'all' | 'executive-summary' | 'action-plan' | 'faq' | 'mind-map' | 'code-organization' | 'blog-post';
 }
 
 export interface SearchFiltersProps {
