@@ -1,5 +1,7 @@
 # LLM Digest
 
+My humble contribution to the wave of vibe coded slop 🫠
+
 Transform AI conversations into structured insights. Import chats from various AI platforms and visualize the information through different formats like mind maps, timelines.
 
 ## Features
